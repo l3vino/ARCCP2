@@ -1,0 +1,4118 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>ARCCP 2</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="Immagini/Favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="Immagini/Favicon.png">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css"/>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+    @import url('https://fonts.cdnfonts.com/css/thesansb');
+    [data-theme="light"] {
+        --font-family: 'TheSans', sans-serif;
+        --bg-dark: hsl(0 0% 90%);
+        --bg: hsl(0 0% 95%);
+        --bg-light: hsl(0 0% 100%);
+        --text: hsl(0 0% 5%);
+        --text-muted: hsl(0 0% 30%);
+        --border: hsl(0 0% 30%);
+        --highlight: hsl(0 0% 100%);
+        --shadow-s: 
+            inset 0 1px 2px hsla(0, 0%, 100%, 0.3), /* top highlight */
+            1px 0 2px hsla(0, 0%, 0%, 0.03),        /* right shadow */
+            -1px 0 2px hsla(0, 0%, 0%, 0.03),       /* left shadow */
+            0 1px 2px hsla(0, 0%, 0%, 0.03),        /* bottom shadow */
+            0 2px 4px hsla(0, 0%, 0%, 0.09);        /* soft blur */
+
+        --shadow-m: 
+            inset 0 1px 2px hsla(0, 0%, 100%, 0.5),
+            2px 0 4px hsla(0, 0%, 0%, 0.03),
+            -2px 0 4px hsla(0, 0%, 0%, 0.03),
+            0 2px 4px hsla(0, 0%, 0%, 0.03),
+            0 4px 8px hsla(0, 0%, 0%, 0.09);
+
+        --shadow-l: 
+            inset 0 1px 2px hsla(0, 0%, 100%, 0.7),
+            4px 0 6px hsla(0, 0%, 0%, 0.03),
+            -4px 0 6px hsla(0, 0%, 0%, 0.03),
+            0 4px 6px hsla(0, 0%, 0%, 0.03),
+            0 6px 10px hsla(0, 0%, 0%, 0.09);
+        --success: hsl(145 60% 55%);
+        --success-light: hsl(145 60% 75%);
+        --error: hsl(0 70% 65%);
+        --error-light: hsl(0 70% 72%);
+        --color1: hsl(201, 100%, 53%);
+        --color1-light: hsl(201, 100%, 33%);
+        --border-card: 1px solid var(--bg);
+        --gradient: linear-gradient(0deg, var(--bg) 95%, var(--bg-light));
+        --gradient-hover: linear-gradient(0deg, var(--bg), var(--bg-light));
+        --gradient-scrollbar: linear-gradient(
+            0deg, 
+            transparent 0rem, 
+            transparent 1rem, 
+            var(--text-muted) 1rem, 
+            var(--text) calc(100% - 1rem), 
+            transparent calc(100% - 1rem), 
+            transparent 100%
+        );
+        --gradient-scrollbar-full: linear-gradient(
+            0deg, 
+            var(--text-muted) 0%, 
+            var(--text) 100%
+        );
+        --h1: bold 1.125rem/1.4em var(--font-family);
+        --h2: bold 1rem/1.4em var(--font-family);
+        --p: 1rem/1.4em var(--font-family);
+        --p2: 0.875rem/1.4em var(--font-family);
+    }
+    [data-theme="dark"] {
+        --font-family: 'TheSans', sans-serif;
+        --bg-dark: hsl(0 0% 0%);
+        --bg: hsl(0 0% 5%);
+        --bg-light: hsl(0 0% 10%);
+        --text: hsl(0 0% 95%);
+        --text-muted: hsl(0 0% 70%);
+        --border: hsl(0 0% 30%);
+        --highlight: hsl(0 0% 60%);
+        --shadow-s: 
+            inset 0 1px 2px hsla(0, 0%, 0%, 0.3),
+            1px 0 2px hsla(0, 0%, 100%, 0.03),
+            -1px 0 2px hsla(0, 0%, 100%, 0.03),
+            0 1px 2px hsla(0, 0%, 100%, 0.03),
+            0 2px 4px hsla(0, 0%, 100%, 0.09);
+
+        --shadow-m: 
+            inset 0 1px 2px hsla(0, 0%, 0%, 0.5),
+            2px 0 4px hsla(0, 0%, 100%, 0.03),
+            -2px 0 4px hsla(0, 0%, 100%, 0.03),
+            0 2px 4px hsla(0, 0%, 100%, 0.03),
+            0 4px 8px hsla(0, 0%, 100%, 0.09);
+
+        --shadow-l: 
+            inset 0 1px 2px hsla(0, 0%, 0%, 0.7),
+            4px 0 6px hsla(0, 0%, 100%, 0.03),
+            -4px 0 6px hsla(0, 0%, 100%, 0.03),
+            0 4px 6px hsla(0, 0%, 100%, 0.03),
+            0 6px 10px hsla(0, 0%, 100%, 0.09);
+        --success: hsl(140 60% 45%);
+        --success-light: hsl(140 55% 35%);
+        --error: hsl(0 65% 60%);
+        --error-light: hsl(0 60% 40%);
+        --color1: hsl(201, 100%, 53%);
+        --color1-light: hsl(201, 100%, 33%);
+        --border-card: 1px solid var(--border);
+        --gradient: linear-gradient(0deg, var(--bg) 95%, var(--bg-light));
+        --gradient-hover: linear-gradient(0deg, var(--bg), var(--bg-light));
+        --gradient-scrollbar: linear-gradient(
+            0deg, 
+            transparent 0rem, 
+            transparent 1rem, 
+            var(--text-muted) 1rem, 
+            var(--text) calc(100% - 1rem), 
+            transparent calc(100% - 1rem), 
+            transparent 100%
+        );
+        --gradient-scrollbar-full: linear-gradient(
+            0deg, 
+            var(--text-muted), 
+            var(--text) 100%
+        );
+        --h1: bold 1.125rem/1.4em var(--font-family);
+        --h2: bold 1rem/1.4em var(--font-family);
+        --p: 1rem/1.4em var(--font-family);
+        --p2: 0.875rem/1.4em var(--font-family);
+    }
+    *{
+        scroll-behavior: smooth;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'TheSans', sans-serif;
+        color: var(--text);
+        font-family: var(--font-family);
+    }
+    *::-webkit-scrollbar{
+        background-color: transparent;
+        width: 0.5rem;
+        border-radius: 100vh;
+        overflow: hidden;
+    }
+    *::-webkit-scrollbar-thumb{
+        background: var(--gradient-scrollbar);
+        border-radius: 100vh;
+    }
+    body{
+        background-color: var(--bg-dark);
+    }
+    #setup{
+        height: 100vh;
+        width: 100vw;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+    }
+    #setup-card{
+        background: var(--gradient);
+        padding: 1.5rem;
+        border-radius: 1rem;
+        border: solid 1px var(--border-card);
+        border-top: solid 1px var(--highlight);
+        box-shadow: var(--shadow-l);
+        height: fit-content;
+        max-height: 90%;
+        width: 60%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 2rem;
+        align-items: center;
+        overflow-y: auto;
+        transition: width 1.5s, height 2s;
+    }
+    #setup-card input, #setup-card select{
+        all: unset;
+        padding: 1rem;
+        border-radius: 1rem;
+        background-color: var(--bg-light);
+        width: 100%;
+        font: var(--p);
+        box-shadow: var(--shadow-s);
+        border: var(--border-card);
+        position: relative;
+    }
+    #setup-card input:-webkit-autofill{
+        font: var(--p) !important;
+        padding: 1rem !important;
+        width: 100% !important;
+        -webkit-text-fill-color: var(--text) !important;
+        -webkit-box-shadow: 0 0 0px 1000px var(--bg-light) inset !important;
+    }
+    #setup-card select option {
+        background-color: var(--bg-light);
+        color: var(--text);
+        font: var(--p);
+        padding: 1rem;
+    }
+    #setup-card label{
+        font: var(--h2);
+        line-height: 1.6rem;
+        width: 100%;
+    }
+    #setup-theme-label{
+        position: relative;
+    }
+    #setup-theme-label::after{
+        content: "";
+        position: absolute;
+        right: 0;
+        bottom: -2.5rem;
+        transform: translate(50%);
+        background-image: url(Immagini/open.svg);
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 80%;
+        height: 1.6rem;
+        width: 1.6rem;
+        overflow: visible;
+        z-index: 2;
+    }
+    /*#setup-card:hover{
+        background: var(--gradient-hover);
+    }*/
+    #setup-title, #setup-name, #setup-theme, #setup-root, #setup-buttons{
+        padding: 1.5rem;
+        border-radius: 1rem;
+        width: 90%;
+        display: flex;
+        flex-direction: column;
+    }
+    #setup-title{
+        align-items: center;
+        font: var(--h1);
+        font-size: 3rem;
+    }
+    #setup-buttons{
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 2rem;
+    }
+    #setup-buttons button{
+        all: unset;
+        cursor: pointer;
+        flex: 1;
+        padding: 1rem;
+        font: var(--p);
+        font-weight: bold;
+        text-align: center;
+        border-radius: 1rem;
+        box-shadow: none;
+        transition: box-shadow 0.25s;
+    }
+    #setup-buttons button:hover{
+        box-shadow: var(--shadow-l);;
+    }
+    #setup-carica-btn{
+        background-color: var(--success) !important;
+    }
+    #setup-carica-btn:active{
+        background-color: var(--success-light) !important;
+    }
+    #setup-root-btn{
+        background-color: var(--color1) !important;
+    }
+    #setup-root-btn:active{
+        background-color: var(--color1-light) !important;
+    }
+    #loading-section{
+        display: none;
+        justify-content: space-between;
+        align-items: center;
+        flex: 1;
+        width: 100%;
+    }
+    #loading{
+        display: flex;
+        width: 28%;
+        aspect-ratio: 1;
+        border-radius: 100vh;
+        background: conic-gradient(
+            from 0deg,             /* start at top */
+            var(--success) 0% 0%,          /* green for first 30% */
+            var(--bg-light) 0% 100%           /* red for remaining 70% */
+        );
+        border: var(--border-card);
+        box-shadow: var(--shadow-l);
+        justify-content: center;
+        align-items: center;
+    }
+    #loading-content{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 80%;
+        aspect-ratio: 1;
+        background: var(--gradient);
+        border-radius: 100vh;
+        box-shadow: var(--shadow-l);
+        font: var(--h1);
+        font-size: 4rem;
+    }
+    .loading-infos{
+        display: flex;
+        width: 0%;
+        height: 100%;
+        background: var(--gradient-hover);
+        border: var(--border-card);
+        box-shadow: var(--shadow-l);
+        border-radius: 2rem;
+        padding: 1rem;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        transition: width 1.5s;
+        font: var(--h1);
+        font-size: 1.2rem;
+    }
+    .loading-infos > :nth-child(1){
+        color: var(--text-muted);
+        font-size: 3rem;
+        margin-bottom: 3rem;
+    }
+    .loading-infos > :nth-child(2){
+        text-align: center;
+        width: 80%;
+        padding: 2rem;
+        border: var(--border-card);
+        border-radius: 1rem;
+        background: var(--bg-light);
+        box-shadow: var(--shadow-m);
+    }
+    #loading-current{
+        padding: 1rem;
+        width: 1%;
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: var(--gradient-hover);
+        border: var(--border-card);
+        border-radius: 2rem;
+        box-shadow: var(--shadow-l);
+        transition: width 1s;
+        font: var(--h1);
+        color: var(--text);
+        font-size: 2.2rem;
+    }
+    #loading-current > :nth-child(2){
+        color: var(--text-muted);
+        font-size: 1rem;
+    }
+    #visualize-pdf-screen{
+        display: none;
+        height: 100vh;
+        width: 100%;
+        flex-direction: column;
+        justify-content: space-evenly;
+        align-items: center;
+    }
+    #visualize-pdf-screen button{
+        all: unset;
+        cursor: pointer;
+        padding: 1rem 5rem;
+        font: var(--h1);
+        font-size: 1.5rem;
+        border-radius: 1rem;
+        border: var(--border-card);
+        box-shadow: var(--shadow-l);
+        background: var(--bg);
+        transition: 0.25s;
+    }
+    #visualize-pdf-screen button:active{
+        background: var(--bg);
+    }
+    #visualize-pdf-screen button:hover{
+        box-shadow: none;
+        font-size: 1.6rem;
+        background: var(--bg-light);
+        border: none;
+        padding: 0.9rem 4.9rem;
+        font-weight: bold;
+    }
+    #visualize-pdf-screen p{
+        font: var(--h1);
+        font-size: 5rem;
+    }
+    #visualize-pdf-screen div{
+        font: var(--h1);
+        font-size: 1.5rem;
+        display: flex;
+        flex-direction: row;
+        gap: 3rem
+    }
+    #visualize-pdf-screen label{
+        cursor: pointer;
+        position: relative;
+        padding: 2rem 6.5rem 2rem 2rem;
+        border-radius: 1rem;
+    }
+    #visualize-pdf-screen input{
+        cursor: pointer;
+        all: unset;
+        position: absolute;
+        height: 1.5rem;
+        aspect-ratio: 1;
+        border-radius: 0.4rem;
+        background-color: var(--bg-light);
+        border: var(--border-card);
+        box-shadow: var(--shadow-l);
+        right: 3rem;
+        top: 50%;
+        transform: translateY(-50%);
+        transition: 0.35s ease-in-out;
+    }
+    #visualize-pdf-screen input:checked{
+        transform: translateY(-50%) rotate(90deg);
+        background-color: var(--success);
+        border-color: var(--success);
+    }
+    #main{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100vh;
+        padding: 2vmin 0 0 0;
+        background-color: var(--bg-dark);
+    }
+    #main-top{
+        width: 100%;
+        max-height: fit-content;
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+    }
+    #main-title{
+        display: flex;
+        position: relative;
+        width: 100%;
+        font: var(--h1);
+        font-size: min(3rem, 5vmin);
+        padding: 0 min(2rem, 2vmin) min(2rem, 2vmin) min(2rem, 2vmin);
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+        transition: 0.5s;
+        user-select: none;
+    }
+    #settings{
+        background-color: transparent;
+        border: none;
+        height: 2rem;
+        aspect-ratio: 1;
+        border-radius: 0.5rem;
+        background-image: url(Immagini/settings.svg);
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        right: 5vmin;
+        transition: 0.15s;
+    }
+    #main-top-bottom{
+        width: 100%;
+        height: fit-content;
+        overflow-y: auto;
+        display: flex;
+        justify-content: center;
+    }
+    #search{
+        width: 75%;
+        height: fit-content;
+        max-height: 100%;
+        display: flex;
+        flex-direction: column;
+        background-color: var(--bg-light);
+        border-radius: 2vmin;
+        border: var(--border-card);
+        box-shadow: var(--shadow-l);
+        cursor: pointer;
+        overflow: hidden;
+    }
+    #main *::-webkit-scrollbar{
+        background-color: transparent;
+        width: 0.5rem;
+        overflow: hidden;
+    }
+    #main *::-webkit-scrollbar-thumb{
+        background: var(--gradient-scrollbar-full);
+        border-radius: 100vh !important;
+    }
+    #search-title, #search-add{
+        width: 100%;
+        font: var(--h1);
+        font-size: min(1rem, 3vmin);
+        text-align: center;
+        border-bottom: var(--border-card);
+        padding: min(0.5rem, 0.5vmin);
+        font-weight: bold;
+        box-shadow: var(--shadow-s);
+        user-select: none;
+        transition: 0.15s;
+    }
+    #search-add:hover{
+        background: var(--gradient-hover);
+    }
+    #search-add:active{
+        background: var(--gradient);
+    }
+    #search-main{
+        width: 100%;
+        height: fit-content;
+        min-height: 5vh;
+        max-height: 12vh;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        overflow-x: hidden;
+        scroll-behavior: smooth;
+    }
+    #search-add{
+        width: 100%;
+        border-bottom: none;
+        border-top: var(--border-card)
+    }
+    .searchbar{
+        width: 100%;
+        height: 5vh;
+        min-height: 4vh;
+        max-height: 5vh;
+        display: flex;
+        border-bottom: var(--border-card);
+        border-right: 2px solid transparent;
+        padding: 0 min(1rem, 1vmin) 0 min(3rem, 5vmin);
+        position: relative;
+        overflow: visible;
+        font-size: 1.5rem;
+        transition: border-color 0.15s;
+    }
+    .searchbar:hover{
+        border-right: 2px solid var(--text-muted);
+        border-right-width: 2px;
+    }
+    .searchbar-logic{
+        position: absolute;
+        top:0;
+        left: min(0.5rem, 0.5vmin);
+        transform: translateY(-50%);
+        height: min(2rem, 4vmin);
+        width: min(3rem, 5vmin);
+        padding: 0 min(0.5rem, 0.5vmax);
+        border-radius: 0.5rem;
+        font-size: min(1.5rem, 1.5vmin);
+        background-color: var(--bg-light);
+        border: var(--border-card);
+        box-shadow: var(--shadow-s);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        user-select: none;
+        scale: 1;
+        transition: 0.15s, scale 0.05s;
+    }
+    .searchbar-logic:hover{
+        background: var(--gradient-hover);
+        box-shadow: var(--shadow-m);
+    }
+    .searchbar-logic:active{
+        box-shadow: none;
+        background: var(--gradient);
+        scale: 0.95
+    }
+    .searchbar-lens, .searchbar-cancel, .searchbar-filters, .searchbar-options, .searchbar-delete{
+        background-color: transparent;
+        border: none;
+        height: 100%;
+        aspect-ratio: 1;
+        position: relative;
+        background-position: center;
+        background-size: 80%;
+        background-repeat: no-repeat;
+        margin: 0 0.25rem;
+        transition: 0.05s;
+    }
+    .searchbar-filters-number{
+        position: absolute;
+        top: 0;
+        right: 0;
+        transform: translateX(80%);
+        background-color: var(--bg-light);
+        border: var(--border-card);
+        box-shadow: var(--shadow-s);
+        border-radius: 0.5vmin;
+        padding: 0.5vmin;
+        font: var(--p1);
+        font-size: 1.1vmin;
+    }
+    .searchbar-cancel:hover, .searchbar-filters:hover, .searchbar-options:hover, .searchbar-delete:hover{
+        background-size: 75%;
+    }
+    .searchbar-cancel:active, .searchbar-filters:active, .searchbar-options:active, .searchbar-delete:active{
+        background-size: 70%;
+    }
+    [data-theme="dark"] .searchbar-lens, 
+    [data-theme="dark"] .searchbar-cancel, 
+    [data-theme="dark"] .searchbar-filters, 
+    [data-theme="dark"] .searchbar-options,
+    [data-theme="dark"] #settings,
+    [data-theme="dark"] #main-panel-pdf-sidebar div,
+    [data-theme="dark"] .filters-menu-searchbar-lens,
+    [data-theme="dark"] .filters-menu-searchbar-cancel,
+    [data-theme="dark"] .settings-list-item-icon,
+    [data-theme="dark"] .img,
+    [data-theme="dark"] #open-map div,
+    [data-theme="dark"] #map-options-icon,
+    [data-theme="dark"] .searchbar-delete {
+        filter: brightness(3); /* make image lighter */
+        /* optionally: invert(1) if icons are black and you want them white */
+    }
+    .searchbar-lens{
+        background-image: url(Immagini/search.svg);
+    }
+    .searchbar-search{
+        all: unset;
+        cursor: initial;
+        padding: 0.5rem;
+        flex: 1;
+        font: var(--p);
+        color: var(--text-muted);
+    }
+    .searchbar-cancel{
+        background-image: url(Immagini/cancel.svg);
+        border-right: var(--border-card);
+        cursor: pointer;
+    }
+    .searchbar-options{
+        background-image: url(Immagini/more-vertical0.svg);
+        position: relative;
+        cursor: pointer;
+    }
+    .searchbar-filters{
+        background-image: url(Immagini/filter.svg);
+        position: relative;
+        cursor: pointer;
+    }
+    .searchbar-delete{
+        background-image: url(Immagini/delete.svg);
+        cursor: pointer;
+    }
+    .searchbar:has(.searchbar-delete:active){
+        border: var(--border-card);
+        border-right-width: 4px;
+        border-color: var(--error-light);
+    }
+    .searchbar:has(.searchbar-delete:active) .searchbar-logic{
+        border-color: var(--error-light);
+        color: var(--error-light);
+    }
+    .searchbar:has(.searchbar-delete:active) .searchbar-search{
+        color: var(--error-light);
+    }
+    #search :nth-child(-1) .searchbar-logic {
+        border-bottom: none;
+    }
+    #search :nth-child(1) .searchbar-logic {
+        display: none;
+    }
+
+
+
+
+
+
+
+    #main-bottom{
+        flex: 1;
+        max-height: 100%;
+        min-height: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: min(2rem, 5vmin);
+        padding-top: min(2rem, 5vmin);
+    }
+    #main-results, #main-panel{
+        flex: 3;
+        height: 100%;
+        background-color: var(--bg-light);
+        border: var(--border-card);
+        box-shadow: var(--shadow-l);
+        border-top-right-radius: 4vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+    #main-results{
+        max-height: 100% !important;
+        overflow-y: auto;
+    }
+    #main-panel{
+        flex: 4;
+        border-top-right-radius: 0;
+        border-top-left-radius: 4vh;
+    }
+    #main-results-title, #main-panel-title{
+        width: 100%;
+        height: 5vmin;
+        display: flex;
+        text-align: center;
+        justify-content: space-around;
+        align-items: center;
+        font: var(--h1);
+        font-size: 2.5vh;
+        box-shadow: var(--shadow-s);
+        border-bottom: var(--border-card);
+        padding: 4vh 4vh;
+        cursor: pointer;
+    }
+    #main-results-title p, #main-panel-title p{
+        flex: 1;
+        overflow-y: auto;
+        word-break: normal;
+        hyphens: auto;
+    }
+    #main-results-title:active, #main-panel-title:active{
+        background: var(--gradient-hover);
+        z-index: 2;
+    }
+    #main-results-container{
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+        overflow-y: auto;
+        position: relative;
+    }
+    #main-resluts-container::-webkit-scrollbar{
+        background-color: transparent;
+        width: 0.5rem;
+        overflow: hidden;
+    }
+    #main-results-container::-webkit-scrollbar-thumb{
+        background: var(--gradient-scrollbar-full);
+        border-radius: 100vh !important;
+    }
+    .result{
+        width: 100%;
+        padding: 1vh;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        height: fit-content;
+        /*border-top: var(--border-card);*/
+        transition: 0.15s;
+        cursor: pointer;
+        border-left: 4px solid transparent;
+    }
+    .result-active{
+        border: 1px solid var(--success-light);
+        border-left: 4px solid var(--success-light);
+        border-right: none;
+        box-shadow: var(--shadow-m);
+    }
+    .result-active .result-text{
+        color: var(--success);
+        font-weight: bold;
+    }
+    .result:hover{
+        padding-left: 1.2vh;
+        border-left: 2px solid var(--text-muted);
+    }
+    .result:hover .result-text{
+        color: var(--text);
+    }
+    .result-active:hover .result-text{
+        color: var(--success);
+        font-weight: bold;
+    }
+    .img{
+        height: 3vh;
+        aspect-ratio: 1;
+        background-image: url(Immagini/pdf.svg);
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 80%;
+    }
+    .result-text{
+        max-width: 100%;
+        overflow-wrap: anywhere;
+        hyphens: auto;
+        font: var(--p);
+        font-size: 1.75vh;
+        color: var(--text-muted);
+        transition: 0.25s;
+        margin: 1vh 0;
+        display: flex;
+    }
+    #main-panel-info-section, #map{
+        flex: 1;
+        display: flex;
+        min-height: 0;
+        position: relative;
+    }
+    #main-panel-info-section{
+        border-bottom: var(--border-card);
+    }
+    #main-panel-pdf, #main-panel-infos{
+        display: flex;
+        flex: 1;
+        min-height: 0;
+    }
+    #main-panel-infos{
+        padding: 1vmin;
+        font-size: 2vh;
+        gap: 1vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-height: 100%;
+        overflow-y: auto;
+        position: relative;
+    }
+    .etichetta{
+        width: 100%;
+        min-height: fit-content;
+        display: flex;
+        flex-direction: column;
+        border: var(--border-card);
+        box-shadow: var(--shadow-s);
+        border-radius: 2vmin;
+        overflow: hidden;
+        cursor: pointer;
+        user-select: none;
+    }
+    .etichetta:has(.etichetta-title:active){
+        background: var(--gradient-hover);
+    }
+    .etichetta-title{
+        width: 100%;
+        font: var(--h1);
+        font-size: 2vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow-y: auto;
+        word-wrap: break-word;
+        border-radius: 2vmin;
+        border-bottom: var(--border-card);
+        padding: 1.5vh;
+    }
+    .etichetta-content{
+        width: 100%;
+    }
+    .etichetta-pair{
+        width: 100%;
+        /*border: var(--border-card);*/
+        display: flex;
+    }
+    .etichetta-pair:has(.etichetta-key:active){
+        background: var(--gradient-hover);
+    }
+    .etichetta-key, .etichetta-value{
+        width: 50%;
+        color: var(--text-muted);
+        font-size: 1.5vh;
+        display: flex;
+        align-items: center;
+        padding: 1vh 2vmin;
+        overflow-wrap: break-all;
+        hyphens: auto;
+    }
+    .etichetta-value:active{
+        background: var(--gradient-hover);
+    }
+    .etichetta-key{
+        border-right: var(--border-card);
+        font-weight: bold;
+        color: var(--text);
+    }
+    #main-panel-pdf-sidebar{
+        border: none;
+        border-right: var(--border-card);
+        /*box-shadow: var(--shadow-m);*/
+        width: 15%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2vmin 0;
+        gap: 4vmin;
+    }
+    #main-panel-pdf-sidebar div{
+        width: 4vmin;
+        aspect-ratio: 1;
+        border-radius: 1vmin;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 60%;
+        border: var(--border-card);
+        box-shadow: var(--shadow-s);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        transition: background-size 0.15s;
+    }
+    #main-panel-pdf-sidebar div:hover{
+        background-size: 55%;
+        box-shadow: var(--shadow-s);
+    }
+    #main-panel-pdf-sidebar div:active{
+        box-shadow: none;
+        scale: 0.9
+    }
+    #main-panel-pdf-sidebar-download{
+        background-image: url(Immagini/download.svg);
+    }
+    #open-map{
+        right: 2vmin;
+        top: 2vmin;
+        position: absolute;
+        z-index: 999;
+        border-radius: 0.5vmin;
+        background-color: var(--bg-light);
+        border: var(--border-card);
+        box-shadow: var(--shadow-l);
+        cursor: pointer;
+    }
+    #open-map div{
+        height: 4vmin;
+        aspect-ratio: 1;
+        background-image: url(Immagini/fullscreen.svg);
+        background-size: 70%;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+    #main-panel-pdf-sidebar-open{
+        background-image: url(Immagini/fullscreen.svg);
+    }
+    #main-panel-pdf-content{
+        width: 80%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        overflow-y: auto;
+        padding: 10px 0;
+        gap: 10px;
+    }
+    #map *{
+        color: hsl(0 0% 5%);
+    }
+
+
+
+
+
+    #loader {
+        min-width: 90vmin;
+        min-height: 90vmin;
+        background-color: var(--color1);
+        border-radius: 50%;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        box-shadow: var(--shadow-l);
+        border: var(--border-card);
+        display: none;
+        overflow: hidden;
+        z-index: 9999;
+    }
+    #loader:before,
+    #loader:after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 45%;
+        top: -40%;
+        background-color: var(--bg-light);
+        animation: wave 5s linear infinite;
+    }
+    #loader:before {
+        border-radius: 30%;
+        background: var(--color1-light);
+        animation: wave 5s linear infinite;
+    }
+    @keyframes wave {
+        0% {
+        transform: rotate(0);
+        }
+        100% {
+        transform: rotate(360deg);
+        }
+    }
+
+    #options-menu:popover-open, #filters-menu:popover-open{
+        display: flex;
+        flex-direction: column;
+        border: var(--border-card);
+        border-radius: 2vmin;
+        background-color: var(--bg-light);
+        box-shadow: var(--shadow-m);
+        position: absolute;
+        top: anchor(top);
+        height: fit-content;
+        overflow: hidden;
+    }
+    #options-menu:popover-open, #filters-menu:popover-open{
+        left: anchor(left);
+        transform: translateX(-100%);
+        border-top-right-radius: 0;
+    }
+    #options-menu:popover-open div, #filters-menu:popover-open div{
+        width: 100%;
+        display: flex;
+        align-items: center;
+    }
+    #options-menu:popover-open label, #filters-menu:popover-open label{
+        font: var(--p);
+        font-size: 2vmin;
+        color: var(--text-muted);
+        flex: 1;
+        cursor: pointer;
+        user-select: none;
+        padding: 2vmin 6.5vmin 2vmin 2vmin;
+        position: relative;
+    }
+    #options-menu:popover-open input[type="checkbox"], #filters-menu:popover-open input[type="checkbox"]{
+        all: unset;
+        position: absolute;
+        height: 2.5vmin;
+        top: 50%;
+        right: 2vmin;
+        transform: translateY(-50%);
+        aspect-ratio: 1;
+        border-radius: 0.5vmin;
+        background-color: var(--bg-light);
+        border: var(--border-card);
+        box-shadow: var(--shadow-s);
+        transition: 0.15s;
+    }
+    #options-menu:popover-open input[type="checkbox"]:checked, #filters-menu:popover-open input[type="checkbox"]:checked{
+        background-color: var(--success-light);
+        transform: translateY(-50%) rotate(90deg);
+        border-color: var(--success-light);
+    }
+    #filters-menu:popover-open{
+        width: fit-content;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(3, fit-content);
+        cursor: default;
+        user-select: none;
+    }
+    #filters-menu:popover-open  > :nth-child(even){
+        border-left: var(--border-card);
+    }
+    .filters-menu-title{
+        padding: 2vmin;
+        display: flex;
+        justify-content: center;
+        font: var(--text);
+        font-size: 2.5vmin;
+        font-weight: bold;
+        box-shadow: var(--shadow-m);
+        border: var(--border-card);
+    }
+    .filters-menu-searchbar{
+        width: 100%;
+        height: 5vmin;
+        display: flex;
+        justify-content: center;
+        padding: 0 2vmin;
+        gap: 2vmin;
+        border-bottom: var(--border-card);
+    }
+    .filters-menu-searchbar-lens, .filters-menu-searchbar-cancel{
+        background-image: url(Immagini/search.svg);
+        background-position: center;
+        background-size: 70%;
+        background-repeat: no-repeat;
+        height: 100%;
+        aspect-ratio: 1;
+    }
+    .filters-menu-searchbar-cancel{
+        background-image: url(Immagini/cancel.svg);
+        cursor: pointer;
+    }
+    .filters-menu-searchbar-cancel:hover{
+        background-size: 68%;
+    }
+    .filters-menu-searchbar-cancel:active{
+        background-size: 62%;
+    }
+    .filters-menu-searchbar-search{
+        all: unset;
+        cursor: initial;
+        height: 100%;
+        min-width: 10vw;
+    }
+    .filters-menu-content{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2vmin;
+        gap: 1vmin;
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+    .filters-menu-content-filter-active, .filters-menu-content-filter-notActive{
+        border-radius: 0.5vmin;
+        background-color: var(--bg-light);
+        border: var(--border-card);
+        box-shadow: var(--shadow-m);
+        display: flex;
+        cursor: pointer;
+        transition: 0.15s;
+    }
+    .filters-menu-content-filter-active:hover, .filters-menu-content-filter-notActive:hover{
+        scale: 1.01;
+        box-shadow: var(--shadow-s);
+    }
+    .filters-menu-content-filter-active:active, .filters-menu-content-filter-notActive:active{
+        scale: 0.99;
+        box-shadow: var(--shadow-s);
+        background-color: var(--success-light);
+        border-color: var(--success);
+    }
+    .filters-menu-content-filter-notActive:active{
+        background-color: var(--error-light);
+        border-color: var(--error);
+    }
+    .filters-menu-content-filter-active:active div, .filters-menu-content-filter-notActive:active div{
+        color: var(--text);
+    }
+    .filters-menu-content-filter-name{
+        width: 100%;
+    }
+    .filters-menu-content-filter-cancel, .filters-menu-content-filter-name{
+        max-width: fit-content;
+        height: 100%;
+        padding: 1vmin;
+        font: var(--p);
+        font-size: 1.7vmin;
+    }
+    .filters-menu-content-filter-active div{
+        color: var(--text);
+    }
+    .filters-menu-content-filter-notActive div{
+        color: var(--success);
+    }
+
+    #popup{
+        position: absolute; 
+        background-color: var(--bg-light); 
+        box-shadow: var(--shadow-l); 
+        border-radius: 2vmin;
+        width: 70vw; 
+        height: 100vh !important; 
+        border: 0;
+        margin: auto 0;
+        outline: none; 
+        left: 2vmin; 
+        bottom: 0; 
+        backdrop-filter: blur(10px); 
+        overflow: hidden; 
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    .settings-popover{
+        inset: unset;
+        top: anchor(top);
+        right: anchor(left);
+        border: none;
+        width: fit-content;
+        height: fit-content;
+        box-shadow: var(--shadow-m);
+        overflow: hidden;
+        border-radius: 2vh;
+        cursor: pointer;
+        margin-right: 1vh;
+    }
+    button{
+        border: none;
+    }
+    .settings-list{
+            background-color: var(--bg);
+            display: flex;
+            flex-direction: column;
+        }
+        .settings-list-item{
+            background-color: var(--bg-light);
+            display: flex;
+            gap: 2vh;
+            width: 100%;
+            padding: 2vh 4vh 2vh 2vh;
+            font-size: 2vh;
+            transition: 0.15s;
+            cursor: pointer;
+        }
+        .settings-list-item:hover{
+            background-color: var(--bg);
+        }
+        .settings-list-item-name{
+            width: 100%;
+            text-align: start;
+        }
+        .settings-list-item-icon{
+            height: 2vh;
+            aspect-ratio: 1;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+        }
+        .settings-list-item-checkbox, .settings-list-item-radio{
+            all: unset;
+            height: 2vh;
+            aspect-ratio: 1;
+            border-radius: 0.5vh;
+            background-color: var(--bg);
+            box-shadow: var(--shadow-m);
+            transition: 0.15s;
+            pointer-events: none;
+        }
+        .settings-list-item-radio{
+            border-radius: 100vh;
+        }
+        .settings-list-item-checkbox:checked, .settings-list-item-radio:checked{
+            background-color: var(--success);
+        }
+        #tools .settings-list-item-icon{
+            background-image: url(Immagini/tools.svg);
+        }
+        #informazioni .settings-list-item-icon{
+            background-image: url(Immagini/info.svg);
+        }
+        #tema .settings-list-item-icon{
+            background-image: url(Immagini/theme.svg);
+        }
+        #opzioni .settings-list-item-icon{
+            background-image: url(Immagini/settings.svg);
+        }
+        #ricerca-camere .settings-list-item-icon{
+            background-image: url(Immagini/search.svg);
+        }
+        #separatore-pdf .settings-list-item-icon{
+            background-image: url(Immagini/pdf.svg);
+        }
+        #tubi .settings-list-item-icon{
+            background-image: url(Immagini/tubi.svg);
+        }
+        #documentazione .settings-list-item-icon{
+            background-image: url(Immagini/file\ icon.png);
+        }
+        #tutorials .settings-list-item-icon{
+            background-image: url(Immagini/tutorials.svg);
+        }
+        #sistema .settings-list-item-icon{
+            background-image: url(Immagini/system.svg);
+        }
+        #chiaro .settings-list-item-icon{
+            background-image: url(Immagini/light.svg);
+        }
+        #scuro .settings-list-item-icon{
+            background-image: url(Immagini/dark.svg);
+        }
+        #AND .settings-list-item-icon{
+            background-image: url(Immagini/AND.svg);
+        }
+        #AND{
+            display: none;
+        }
+        #esporta-dati .settings-list-item-icon{
+            background-image: url(Immagini/download.svg);
+        }
+        #cancella-dati .settings-list-item-icon{
+            background-image: url(Immagini/delete.svg);
+        }
+        #carica-dati .settings-list-item-icon{
+            background-image: url(Immagini/upload.svg);
+        }
+
+
+
+        .leaflet-tile {
+            image-rendering: crisp-edges; /* or crisp-edges */
+        }
+        #map-options{
+            user-select: none;
+            display: flex;
+            flex-direction: column;
+            border-radius: 1vmin;
+            background-color: var(--bg-light);
+            border: var(--border-card);
+            box-shadow: var(--shadow-m);
+            position: absolute;
+            min-height: 4vh;
+            min-width: 4vh;
+            top: 2vmin;
+            left: 2vmin;
+            overflow: hidden;
+            z-index: 9999;
+            cursor: pointer;
+            overscroll-behavior: contain;
+            transition: 0.5s;
+        }
+        #map-options:hover{
+            min-height: 4vmin;
+            min-width: 4vmin;
+            max-height: calc(100% - 6vmin);
+            max-width: 20%;
+            background-image: none;
+        }
+        #map-options  div{
+            display: none;
+        }
+        #map-options:hover div{
+            display: flex;
+        }
+        #map-options-icon{
+            display: flex !important;
+            height: 4vh;
+            aspect-ratio: 1;
+            background-image: url(Immagini/layers.svg);
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: 80%;
+        }
+        #map-options:hover #map-options-icon{
+            display: none !important;
+        }
+        #map-options-title{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2vmin 0;
+            font-size: 3vmin;
+            color: var(--text) !important;
+            box-shadow: var(--shadow-l);
+        }
+        #map-options-content{
+            display: flex;
+            flex-direction: column;
+            transition: 0.25s;
+            max-height: calc(100vh - 4vmin);
+            overflow-y: auto;
+        }
+        .map-option{
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2vmin;
+            padding: 2vmin;
+        }
+        .map-option label{
+            all: unset;
+            pointer-events: none;
+            height: 100%;
+            width: 100% !important;
+            word-break: normal;
+            hyphens: auto;
+            font-size: 2vmin;
+            color: var(--text) !important;
+            cursor: pointer;
+        }
+        .map-option input{
+            all: unset;
+            pointer-events: none;
+            height: 2.5vmin;
+            aspect-ratio: 1;
+            border-radius: 0.5vmin;
+            background-color: var(--bg-light);
+            box-shadow: var(--shadow-s);
+            transition: 0.15s;
+            border: var(--border-card);
+        }
+        .map-option input[type="radio"]{
+            border-radius: 100vmax;
+            height: 2vmin;
+            margin-right: 0.25vmin;
+        }
+        #map-options-content:first-of-type(input[type="radio"]){
+            border-bottom: 2px solid green;
+        }
+        .map-option input:checked{
+            background-color: var(--success-light);
+            transform-origin: center;
+            transform: rotate(90deg);
+        }
+        #map-fullscreen{
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            position: relative;
+        }
+
+
+        #marker-info{
+            display: none;
+            flex-direction: column;
+            width: min(30vw, 40%);
+            height: fit-content;
+            max-height: calc(100% - 9vmin - 4vmax);
+            position: absolute;
+            right: 2vmin;
+            top: calc(4vmin + 4vmax);
+            background-color: var(--bg-light);
+            box-shadow: var(--shadow-m);
+            border: var(--border-card);
+            border-radius: 5vmin;
+            z-index: 9999;
+            overflow: hidden;
+            cursor: pointer;
+            user-select: none;
+        }
+        #marker-info *{
+            color: var(--text);
+        }
+        .marker-info-title{
+            width: 100%;
+            height: 10%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2vmin;
+            word-break: break-all;
+            overflow-y: auto;
+            padding: 3vmin 5vmin;
+            overflow: hidden;
+            font-weight: bold;
+        }
+        #marker-info-title-result{
+            display: none;
+        }
+        #marker-info-tabs{
+            display: flex;
+            width: 100%;
+            height: 5%;
+            border: var(--border-card);
+            justify-content: center;
+            /*background-color: var(--bg);*/
+        }
+        #marker-info-tabs div{
+            display: flex;
+            width: 100%;
+            height: 100%;
+            justify-content: center;
+            align-items: center;
+            font-size: 2vmin;
+            text-decoration: underline;
+            padding: 2vmin;
+        }
+        #marker-info-tabs > :first-child{
+            text-decoration: none;
+        }
+        .marker-info-etichette{
+            min-height: 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 2vmin;
+            gap: 2vmin;
+            cursor: default;
+            overflow-y: auto;
+        }
+        #marker-info-etichette-result{
+            display: none;
+        }
+        .marker-info-etichetta{
+            width: 100%;
+            height: max(fit-content, 10vh);
+            border-radius: 2vmin;
+            box-shadow: var(--shadow-s);
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        .marker-etichetta-title{
+            padding: 2vmin;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            font-size: 2vmin;
+            position: sticky;
+            top: 0;
+            border-bottom: var(--border-card);
+        }
+        .marker-info-etichetta:has(.marker-etichetta-title:active){
+            background-color: var(--bg);
+        }
+        .marker-info-etichetta-pair{
+            width: 100%;
+            display: flex;
+        }
+        .marker-info-etichetta-pair:has(.marker-info-etichetta-pair-key:active){
+            background-color: var(--bg);
+        }
+        .marker-info-etichetta-pair div{
+            flex: 1;
+            padding: 1vmin;
+            font-size: 1.5vmin;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            word-break: break-all;
+            hyphens: auto;
+        }
+        .marker-info-etichetta-pair > :first-child{
+            border-right: var(--border-card);
+            font-weight: bold;
+        }
+        .marker-info-etichetta-pair-value:active{
+            background-color: var(--bg);
+        }
+        .buildingInfos{
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            user-select: none;
+            cursor: pointer;
+        }
+        .buildingInfos *{
+            word-break: break-all;
+            hyphens: auto;
+        }
+        .buildingInfos-title{
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 1vmin;
+            box-shadow: var(--shadow-s);
+            font-weight: bold;
+            font-size: 2vmin;
+        }
+        .buildingInfos-mapOptions{
+            width: 100%;
+            display: flex;
+            box-shadow: var(--shadow-s);
+        }
+        .buildingInfos-mapOptions div{
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1vmin;
+            font-size: 1.4vmin;
+        }
+        .buildingInfos-mapOptions div:hover, .buildingInfos-title:hover{
+            text-decoration: underline;
+        }
+        .buildingInfos-data{
+            flex: 1;
+            height: 100%;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .buildingInfos-pair{
+            width: 100%;
+            display: flex;
+        }
+        .buildingInfos-pair:has(:first-child:active) {
+            background-color: var(--bg);
+        }
+        .buildingInfos-pair div{
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1vmin;
+            font-size: 1.2vmin;
+        }
+        .buildingInfos-pair > :last-child:active{
+            background-color: var(--bg);
+        }
+        .buildingInfos-pair > :first-child{
+            border-right: var(--border-card);
+            font-weight: bold;
+        }
+
+        .leaflet-popup-close-button{
+            display: none;
+        }
+        .leaflet-popup-content{
+            word-break: break-all;
+            hyphens: auto;
+            margin: 0 !important;
+            max-width: 25vw;
+        }
+        .leaflet-popup-content-wrapper {
+            max-width: 25vw !important; /* default ~300px */
+        }
+
+    
+  </style>
+</head>
+<body>
+
+    <dialog id="popup">
+
+    </dialog>
+
+
+  <img src="Immagini/logo-animated2.gif" style="position: absolute; top:2vmin; left:8vmin; height: 4vmax; z-index: 999; transition: 0.15s;" id="logo">
+  <span id="loader"></span>
+  <input type="file" id="folder" webkitdirectory multiple hidden/>
+
+  <div id="setup">
+    <div id="setup-card">
+        <div id="setup-title">
+            <p>Setup</p>
+        </div>
+        <div id="setup-name">
+            <label for="name-input">Nome</label>
+            <input type="text" id="name-input" autocomplete="name">
+        </div>
+        <div id="setup-theme">
+            <label for="theme-input" id="setup-theme-label">Tema</label>
+            <select name="Theme" id="theme-input">
+                <option value="system">Sistema</option>
+                <option value="light">Chiaro</option>
+                <option value="dark">Scuro</option>
+            </select>
+        </div>
+        <div id="setup-root">
+            <label for="root-input">Percorso catella pdf</label>
+            <input type="text" id="root-input">
+        </div>
+        <div id="setup-buttons">
+            <button id="setup-root-btn">Usa percorso default</button>
+            <button id="setup-carica-btn">Carica</button>
+        </div>
+        <div id="loading-section">
+            <div class="loading-infos">
+                <p>Threads</p>
+                <p>0/0</p>
+            </div>
+            <div id="loading">
+                <div id="loading-content">
+                    <p>0%</p>
+                </div>
+            </div>
+            <div class="loading-infos">
+                <p>Files</p>
+                <p>0/0</p>
+            </div>
+        </div>
+        <div id="loading-current">
+            <p>File corrente</p>
+            <p>C:\Users\liaml\OneDrive\Desktop\progetto luigi\Agno (63AGN) - Bogno (63MAC)</p>
+        </div>
+    </div>
+  </div>
+  <div id="visualize-pdf-screen">
+    <p>Rinnova accessi <span style="font-size: 2rem;">(Ctrl + V)</span></p>
+    <div>
+        <label for="aggiorna-dati">Aggiorna dati <input id="aggiorna-dati" type="checkbox"></label>
+        <button id="main-visualizza-pdf-btn">Accedi</button>
+    </div>
+  </div>
+  <div id="main">
+    <div popover id="options-menu">
+        <div><label title="Differenzia maiuscole/minuscole">Aa <input type="checkbox"></label></div>
+        <div><label title="Controlla se il valore corrisponde esattamente alla ricerca (es: lato ≠ gelato)">Parola esatta <input type="checkbox"></label></div>
+        <div><label title="Cerca i risultati che NON corrispondono alla ricerca">NOT <input type="checkbox"></label></div>
+    </div>
+    <div popover id="filters-menu">
+        <div class="filters-menu-title">Filtri non attivi</div>
+        <div class="filters-menu-title">Filtri attivi</div>
+        <div class="filters-menu-searchbar">
+            <div class="filters-menu-searchbar-lens"></div>
+            <input type="text" placeholder="Cerca..." class="filters-menu-searchbar-search">
+            <div class="filters-menu-searchbar-cancel"></div>
+        </div>
+        <div class="filters-menu-searchbar">
+            <div class="filters-menu-searchbar-lens"></div>
+            <input type="text" placeholder="Cerca..." class="filters-menu-searchbar-search">
+            <div class="filters-menu-searchbar-cancel"></div>
+        </div>
+        <div class="filters-menu-content">
+            <div class="filters-menu-content-filter-active">
+                <div class="filters-menu-content-filter-cancel">x</div>
+                <div class="filters-menu-content-filter-name">MrBeast</div>
+            </div>
+        </div>
+        <div class="filters-menu-content">
+            <div class="filters-menu-content-filter-notActive">
+                <div class="filters-menu-content-filter-cancel">x</div>
+                <div class="filters-menu-content-filter-name">MrBeast</div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div id="main-top">
+        <div id="main-title">
+            <p>ARCCP 2</p>
+
+            <button id="settings" popovertarget="settings-popover"></button>
+            <div id="settings-popover" class="settings-popover" popover anchor="settings">
+                <button class="settings-list-item" id="tools" popovertarget="settings-popover-tools" style="display: none;">
+                    <div class="settings-list-item-arrow"><</div>
+                    <div class="settings-list-item-name">Tools</div>
+                    <div class="settings-list-item-icon"></div>
+                </button>
+                <button class="settings-list-item" id="informazioni" popovertarget="settings-popover-tutorials"style="display: none;">
+                    <div class="settings-list-item-arrow"><</div>
+                    <div class="settings-list-item-name">Informazioni</div>
+                    <div class="settings-list-item-icon"></div>
+                </button>
+                <button class="settings-list-item" id="tema" popovertarget="settings-popover-tema">
+                    <div class="settings-list-item-arrow"><</div>
+                    <div class="settings-list-item-name">Tema</div>
+                    <div class="settings-list-item-icon"></div>
+                </button>
+                <button class="settings-list-item" id="opzioni" popovertarget="settings-popover-opzioni">
+                    <div class="settings-list-item-arrow"><</div>
+                    <div class="settings-list-item-name">Opzioni</div>
+                    <div class="settings-list-item-icon"></div>
+                </button>
+                <!--
+                <div class="settings-list-item">Scarica dati (Excel)</div>
+                <div class="settings-list-item">Cancella dati</div>
+                <div class="settings-list-item">Aggiorna dati</div>
+                -->
+                    <div id="settings-popover-tools" class="settings-popover" popover anchor="tools">
+                        <button class="settings-list-item" id="ricerca-camere" popovertarget="">
+                            <div class="settings-list-item-icon"></div>
+                            <div class="settings-list-item-name">Ricerca camere</div>
+                            <input type="radio" name="Tool" class="settings-list-item-radio" disabled checked value="ricercaCamere">
+                        </button>
+                        <button class="settings-list-item" id="separatore-pdf" popovertarget="">
+                            <div class="settings-list-item-icon"></div>
+                            <div class="settings-list-item-name">Separatore PDF</div>
+                            <input type="radio" name="Tool" class="settings-list-item-radio" disabled value="separatorePdf">
+                        </button>
+                        <button class="settings-list-item" id="tubi" popovertarget="">
+                            <div class="settings-list-item-icon"></div>
+                            <div class="settings-list-item-name">Tubi</div>
+                            <input type="radio" name="Tool" class="settings-list-item-radio" disabled value="tubi">
+                        </button>
+                    </div>
+                    <div id="settings-popover-tutorials" class="settings-popover" popover anchor="tutorials">
+                        <button class="settings-list-item" id="documentazione" popovertarget="">
+                            <div class="settings-list-item-icon"></div>
+                            <div class="settings-list-item-name">Documentazione</div>
+                        </button>
+                        <button class="settings-list-item" id="tutorials" popovertarget="">
+                            <div class="settings-list-item-icon"></div>
+                            <div class="settings-list-item-name">Tutorials</div>
+                        </button>
+                    </div>
+                    <div id="settings-popover-tema" class="settings-popover" popover anchor="tema">
+                        <button class="settings-list-item" id="sistema" popovertarget="">
+                            <div class="settings-list-item-icon"></div>
+                            <div class="settings-list-item-name">Sistema</div>
+                            <input type="radio" name="Theme" class="settings-list-item-radio" disabled checked value="system">
+                        </button>
+                        <button class="settings-list-item" id="chiaro" popovertarget="">
+                            <div class="settings-list-item-icon"></div>
+                            <div class="settings-list-item-name">Chiaro</div>
+                            <input type="radio" name="Theme" class="settings-list-item-radio" disabled value="light">
+                        </button>
+                        <button class="settings-list-item" id="scuro" popovertarget="">
+                            <div class="settings-list-item-icon"></div>
+                            <div class="settings-list-item-name">Scuro</div>
+                            <input type="radio" name="Theme" class="settings-list-item-radio" disabled value="dark">
+                        </button>
+                    </div>
+                    <div id="settings-popover-opzioni" class="settings-popover" popover anchor="opzioni">
+                        <button class="settings-list-item" id="AND" popovertarget="" title="Se selezionato mostra i risultati che corrispondono a tutte le ricerche, se no mostra i risultati di ogni ricerca.">
+                            <div class="settings-list-item-icon"></div>
+                            <div class="settings-list-item-name">AND</div>
+                            <input type="checkbox" class="settings-list-item-checkbox" disabled checked id="ANDCheckbox">
+                        </button>
+                        <button class="settings-list-item" id="esporta-dati" popovertarget="">
+                            <div class="settings-list-item-icon"></div>
+                            <div class="settings-list-item-name" onclick="exportExcel()">Esporta dati (Excel)</div>
+                        </button>
+                        <button class="settings-list-item" id="cancella-dati" popovertarget="">
+                            <div class="settings-list-item-icon"></div>
+                            <div class="settings-list-item-name">Cancella Dati</div>
+                        </button>
+                        <button class="settings-list-item" id="carica-dati" popovertarget="">
+                            <div class="settings-list-item-icon"></div>
+                            <div class="settings-list-item-name">Carica dati</div>
+                        </button>
+                    </div>
+
+            </div>
+
+
+
+
+
+        </div>
+        <div id="main-top-bottom">
+            <div id="search">
+                <div id="search-title">Ricerca</div>
+                <div id="search-main">
+                    <!--<div class="searchbar">
+                        <div class="searchbar-logic">OR</div>
+                        <div class="searchbar-lens"></div>
+                        <input type="text" class="searchbar-search">
+                        <div class="searchbar-cancel">
+                        </div>
+                        <div class="searchbar-options"></div>
+                        <div class="searchbar-filters">
+                            <div class="searchbar-filtersnumber">1</div>
+                        </div>
+                        <div class="searchbar-delete"></div>
+                    </div>
+                    <div class="searchbar">
+                        <div class="searchbar-logic">OR</div>
+                        <div class="searchbar-lens"></div>
+                        <input type="text" class="searchbar-search">
+                        <div class="searchbar-cancel">
+                        </div>
+                        <div class="searchbar-options"></div>
+                        <div class="searchbar-filters"></div>
+                        <div class="searchbar-delete"></div>
+                    </div>-->
+                </div>
+                <div id="search-add">+</div>
+            </div>
+        </div>
+    </div>
+    <div id="main-bottom">
+        <div id="main-results">
+            <div id="main-results-title">
+                <p>Risultati: 0</p>
+            </div>
+            <div id="main-results-container">
+                <!--<div class="result">
+                    <div class="img"></div>
+                    <div class="result-text">hello freddy fazbero</div>
+                </div>
+
+                <div class="result">
+                    <div class="img"></div>
+                    <div class="result-text">hello freddy fazbero</div>
+                </div>
+                <div class="result result-active">
+                    <div class="img"></div>
+                    <div class="result-text">hello freddy fazbero</div>
+                </div>
+                <div class="result">
+                    <div class="img"></div>
+                    <div class="result-text">hello freddy fazbero</div>
+                </div>-->
+            </div>
+        </div>
+        <div id="main-panel">
+            <div id="main-panel-title">
+                <p>Titolo</p>
+            </div>
+            <div id="main-panel-info-section">
+                <div id="main-panel-pdf">
+                    <div id="main-panel-pdf-sidebar">
+                        <div id="main-panel-pdf-sidebar-download"></div>
+                        <div id="main-panel-pdf-sidebar-open"></div>
+                    </div>
+                    <div id="main-panel-pdf-content"></div>
+                </div>
+                <div id="main-panel-infos">
+                    <!--<div class="etichetta">
+                        <div class="etichetta-title">Etichetta 1</div>
+                        <div class="etichetta-content">
+                            <div class="etichetta-pair">
+                                <div class="etichetta-key">key</div>
+                                <div class="etichetta-value">value</div>
+                            </div>
+                        </div>
+                    </div>-->
+                </div>
+            </div>
+            <div id="map-fullscreen">
+                <div id="map">
+                    <div id="open-map"><div></div></div>
+                    <div id="map-options">
+                        <div id="map-options-icon"></div>
+                        <div id="map-options-title">
+                            Layers
+                        </div>
+                        <div id="map-options-content">
+                            <div class="map-option">
+                                <label>Satellite</label><input type="radio" id="satelliteLayer" name="mapOption" value="swisstopoSatellite">
+                            </div>
+                            <div class="map-option">
+                                <label>OpenStreetMap (light)</label><input type="radio" id="lightLayer" name="mapOption" value="mapLight" checked>
+                            </div>
+                            <div class="map-option" style="border-bottom: var(--border-card);">
+                                <label>OpenStreetMap (dark)</label><input type="radio" id="darkLayer" name="mapOption" value="mapDark">
+                            </div>
+    
+                            <div class="map-option">
+                                <label>Confine svizzero</label><input type="checkbox" value="swissBorder">
+                            </div>
+                            <div class="map-option">
+                                <label>Confini cantonali</label><input type="checkbox" value="cantonsLayer" checked>
+                            </div>
+                            <div class="map-option">
+                                <label>Confini comunali</label><input type="checkbox" value="comuniLayer">
+                            </div>
+                            <div class="map-option">
+                                <label>Nomi</label><input type="checkbox" value="mapLabels" checked>
+                            </div>
+                            <div class="map-option">
+                                <label>Informazioni edifici</label><input type="checkbox" value="constructionLayer">
+                            </div>
+                        </div>
+                    </div>
+                    <div id="marker-info">
+                        <div class="marker-info-title" id="marker-info-title-result">Title</div>
+                        <div class="marker-info-title" id="marker-info-title-current">Title</div>
+                        <div id="marker-info-tabs">
+                            <div id="marker-info-tabs-result">Risultato</div>
+                            <div id="marker-info-tabs-current">Corrente</div>
+                        </div>
+                        <div id="marker-info-etichette-result" class="marker-info-etichette">
+                            <div class="marker-info-etichetta">
+                                <div class="marker-etichetta-title">Etichetta 1</div>
+                                <div class="marker-info-etichetta-pair">
+                                    <div class="marker-info-etichetta-pair-key">key</div>
+                                    <div class="marker-info-etichetta-pair-value">value</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="marker-info-etichette-current" class="marker-info-etichette">
+                            <div class="marker-info-etichetta">
+                                <div class="marker-etichetta-title">Etichetta 1</div>
+                                <div class="marker-info-etichetta-pair">
+                                    <div class="marker-info-etichetta-pair-key">key</div>
+                                    <div class="marker-info-etichetta-pair-value">value</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div> 
+    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.min.js';
+
+        // Keep a reference to the current PDF loading task
+        let currentPdfTask = null;
+
+        async function renderPDFFile(file) {
+            const container = document.getElementById("main-panel-pdf-content");
+
+            // Cancel previous render if one is in progress
+            if (currentPdfTask) {
+                try {
+                    currentPdfTask.destroy(); // cancels the loading/rendering
+                } catch (err) {
+                    console.warn("Previous PDF task could not be destroyed:", err);
+                }
+                currentPdfTask = null;
+            }
+
+            container.innerHTML = ""; // clear container
+
+            const arrayBuffer = await file.arrayBuffer();
+            
+            // Start new PDF loading task
+            currentPdfTask = pdfjsLib.getDocument({ data: arrayBuffer });
+
+            try {
+                const pdf = await currentPdfTask.promise;
+                const containerHeight = container.clientHeight;
+                const pixelRatio = window.devicePixelRatio || 1;
+
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+
+                    const scaledViewport = page.getViewport({ scale: pixelRatio });
+                    const canvas = document.createElement("canvas");
+                    const context = canvas.getContext("2d");
+
+                    canvas.width = scaledViewport.width;
+                    canvas.height = scaledViewport.height;
+
+                    await page.render({ canvasContext: context, viewport: scaledViewport }).promise;
+
+                    // Fit canvas to container height
+                    const cssScale = containerHeight / scaledViewport.height;
+                    canvas.style.height = `${containerHeight}px`;
+                    canvas.style.width = `${scaledViewport.width * cssScale}px`;
+                    canvas.style.display = "block";
+                    canvas.style.margin = "0 auto";
+
+                    container.appendChild(canvas);
+                }
+            } catch (err) {
+                if (err?.name === 'RenderingCancelledException' || err?.message?.includes('cancelled')) {
+                    // This is expected if the task was destroyed
+                    console.log("PDF render was cancelled.");
+                } else {
+                    console.error("Error rendering PDF:", err);
+                }
+            } finally {
+                currentPdfTask = null; // clear reference when done
+            }
+        }
+
+    </script>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+    <script>
+        const esportaDati = document.getElementById("esporta-dati")
+        const cancellaDati = document.getElementById("cancella-dati")
+        const caricaDati = document.getElementById("carica-dati")
+
+        cancellaDati.addEventListener("click", ()=>{
+            localStorage.clear();
+            async function clearAllIndexedDB() {
+                if (!window.indexedDB){
+                    location.reload();
+                    return;
+                }
+
+                // Get all databases (works in modern browsers)
+                const dbs = await indexedDB.databases();
+                
+                for (const db of dbs) {
+                    if (db.name) {
+                        indexedDB.deleteDatabase(db.name);
+                        console.log(`Deleted IndexedDB: ${db.name}`);
+                    }
+                }
+                location.reload();
+            }
+
+            // Call the function
+            clearAllIndexedDB();
+        })
+        caricaDati.addEventListener("click", ()=>{
+            ui("setup")
+            document.getElementById("name-input").value = localStorage.getItem("name")
+            document.getElementById("root-input").value = localStorage.getItem("root")
+            document.getElementById("setup-carica-btn").click()
+        })
+        cancellaDati.addEventListener("click", ()=>{
+            exportExcel()
+        })
+
+        document.getElementById("tema").addEventListener("click", ()=>{
+            theme = localStorage.getItem("theme")
+            if(theme === "system"){
+                document.getElementById("sistema").querySelector("input").checked = true
+            }else if(theme === "light"){
+                document.getElementById("chiaro").querySelector("input").checked = true
+            }else{
+                document.getElementById("scuro").querySelector("input").checked = true
+            }
+        })
+        document.getElementById("sistema").addEventListener("click", ()=>{
+            document.getElementById("sistema").querySelector("input").checked = true
+            localStorage.setItem('theme', "system");
+            applyTheme()
+        })
+        document.getElementById("chiaro").addEventListener("click", ()=>{
+            document.getElementById("chiaro").querySelector("input").checked = true
+            localStorage.setItem('theme', "light");
+            applyTheme()
+        })
+        document.getElementById("scuro").addEventListener("click", ()=>{
+            document.getElementById("scuro").querySelector("input").checked = true
+            localStorage.setItem('theme', "dark");
+            applyTheme()
+        })
+
+        
+        document.getElementById("main-title").addEventListener("mouseover", ()=>{
+            const p = document.getElementById("main-title").children[0]
+            p.textContent = "Archivio Rilievi Camere Canalizzazioni Principali 2"
+        })
+        document.getElementById("main-title").addEventListener("mouseout", ()=>{
+            const p = document.getElementById("main-title").children[0]
+            p.textContent = "ARCCP 2"
+        })
+
+
+
+
+
+
+
+
+
+
+
+
+
+        const Popup = document.getElementById("popup")
+        Popup.addEventListener("click", ()=>{
+            if (!Popup.open){return}
+            const rect = Popup.getBoundingClientRect();
+                const isInDialog =
+                event.clientX >= rect.left &&
+                event.clientX <= rect.right &&
+                event.clientY >= rect.top &&
+                event.clientY <= rect.bottom;
+
+            if (!isInDialog) {
+                Popup.close(); // closes the modal
+            }
+        })
+        function popup(option, value = null) {
+            const popup = document.getElementById("popup")
+            if (popup.open){return}
+            popup.showModal()
+            popup.style.height = "100vh"
+            popup.style.width = "100vw"
+            popup.innerHTML = ""
+
+            if(option === "pdf"){
+                const url = URL.createObjectURL(value);
+                // Create an iframe
+                const iframe = document.createElement('iframe');
+                iframe.src = url;
+                iframe.width = "100%";
+                iframe.height = "100%";
+                iframe.style.border = "none";
+
+                // Clear previous content and append iframe
+                popup.innerHTML = "";
+                popup.appendChild(iframe);
+
+                // Optional: revoke URL when iframe is removed (free memory)
+                iframe.onload = () => URL.revokeObjectURL(url);
+            }
+        }
+        document.getElementById("main-panel-pdf-sidebar-download").addEventListener("click", ()=>{
+            async function downloadPDF(file, filename) {
+                // Create an object URL for the file
+                const url = URL.createObjectURL(file);
+
+                // Create a temporary <a> element
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = filename; // Set the download filename
+
+                // Trigger the download
+                a.click();
+
+                // Clean up
+                URL.revokeObjectURL(url);
+            }
+            downloadPDF(currentFile, currentFile.name)
+        })
+        document.getElementById("main-panel-pdf-sidebar-open").addEventListener("click", ()=>{
+            popup("pdf", currentFile)
+        })
+        document.getElementById("open-map").addEventListener("click", ()=>{
+            const mapDiv = document.getElementById("map-fullscreen")
+            const options = document.getElementById("map-options")
+            if(mapDiv.style.position == "static" || mapDiv.style.position == ""){
+                mapDiv.style.position = "fixed"
+                mapDiv.style.width = "100vw"
+                mapDiv.style.height = "100vh"
+                options.style.maxHeight = "calc(100% - 9vmin - 4vmax)";
+                options.style.top = "calc(4vmin + 4vmax)";
+                document.getElementById("main-panel").style.position="fixed"
+                map.invalidateSize()
+            }else{
+                mapDiv.style.position = "static"
+                mapDiv.style.width = "unset"
+                mapDiv.style.height = "unset"
+                options.style.maxHeight = "calc(100% - 6vmin)";
+                options.style.top = "2vmin";
+                document.getElementById("main-panel").style.position="static"
+                map.invalidateSize()
+            }
+        })
+        let angle = 0;
+        const settings = document.getElementById("settings");
+
+        settings.addEventListener("click", () => {
+            angle += 45;
+            settings.style.transform = `rotate(${angle}deg)`;
+        });
+        const folderInput = document.getElementById('folder');
+        let ricarica = false
+        let files = null;
+        let currentFile = null
+
+        let data = null;
+        let proprierties = null
+
+
+
+
+
+
+
+
+        async function exportExcel(){
+            document.body.style.cursor = "wait";
+            let root = localStorage.getItem("root");
+            if(root.endsWith('"')){
+                root = root.slice(1, -1)
+                root = root + "/"
+            }
+            console.log(root)
+            let header = ["Percorso File", "Estensione File", "Nome File"]
+            let allData = []
+            for (let i = 0; i < proprierties.length; i++) {
+                const filter = proprierties[i];
+                header.push(filter)
+            }
+            allData.push(header)
+            
+            for (let i = 0; i < data.length; i++) {
+                const dataPoint = data[i];
+                if(!dataPoint.relativePath.endsWith(".pdf")){
+                    let newData = []
+                    newData[0] = (root + dataPoint.relativePath.split("/").slice(1).join("/"))
+                    newData[1] = (dataPoint.relativePath.substring(dataPoint.relativePath.lastIndexOf(".") + 1))            
+                    newData[2] = (dataPoint.relativePath)
+                    for (let j = 0; j < proprierties.length; j++) {
+                        newData.push("")
+                    }
+                    allData.push(newData)
+                }else{
+
+                
+                    for (let j = 0; j < dataPoint.pdfInfos.length; j++) {
+                        const etichetta = dataPoint.pdfInfos[j];
+                        
+                        let newData = new Array(3 + proprierties.length)
+                        newData[0] = (root + dataPoint.relativePath.split("/").slice(1).join("/"))
+                        newData[1] = (dataPoint.relativePath.substring(dataPoint.relativePath.lastIndexOf(".") + 1))            
+                        newData[2] = (dataPoint.relativePath)
+                        console.log(newData)
+
+                        const keys = Object.keys(etichetta)
+                        
+                        for (let k = 0; k < keys.length; k++) {
+                            const key = keys[k];
+                            const value = etichetta[key]
+
+                            const index = proprierties.indexOf(key) + 3
+                            if(value !== undefined || value !== "" || value !== null){
+                                newData[index] = value
+                            }else{
+                                newData[index] = ""
+                            }
+                        }
+                        allData.push(newData)
+                    }
+                }
+            }
+            console.log(allData)
+
+            // Create a new workbook
+            const workbook = new ExcelJS.Workbook();
+
+            // 2. Add a sheet named "Info camere"
+            const sheet = workbook.addWorksheet(`Info camere (${allData.length-1})`);
+
+            // 4. Add rows
+            sheet.addRows(allData);
+
+            // Make first column (except header) a clickable link
+            for (let rowIndex = 2; rowIndex <= sheet.rowCount; rowIndex++) {
+                const cell = sheet.getRow(rowIndex).getCell(1);
+                if (cell.value) {
+                    const text = cell.value.toString();
+                    cell.value = { text: text, hyperlink: text };
+                    cell.font = { color: { argb: 'FF0000FF' }, underline: true }; // blue & underlined like a link
+                }
+            }
+
+            // 5. Set the header row filter and freeze it
+            const headerLength = allData[0].length;
+            sheet.autoFilter = {
+                from: 'A1',
+                to: `${columnNumberToLetter(headerLength)}1`
+            };
+            sheet.views = [{ state: 'frozen', ySplit: 1 }];
+
+            // Optional: style header row
+            sheet.getRow(1).height = 30;
+            sheet.getRow(1).eachCell((cell) => {
+                cell.font = { bold: true };
+                cell.alignment = { horizontal: 'center', vertical: 'middle' };
+            });
+
+            // Auto-fit columns
+            for (let i = 0; i < headerLength; i++) {
+                let maxLength = 0;
+                sheet.eachRow((row) => {
+                    const cellValue = row.getCell(i + 1).value;
+                    if (cellValue) {
+                        const len = typeof cellValue === 'object' && cellValue.text ? cellValue.text.length : cellValue.toString().length;
+                        if (len > maxLength) maxLength = len;
+                    }
+                });
+                sheet.getColumn(i + 1).width = maxLength + 2;
+            }
+
+            // 7. Generate Excel file in browser
+            const today = new Date();
+            const day = String(today.getDate()).padStart(2, '0');
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const year = today.getFullYear();
+            const formattedDate = `${day}.${month}.${year}`;
+
+            const buffer = await workbook.xlsx.writeBuffer();
+            const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+            saveAs(blob, formattedDate + " Archivio Rilievi Camere Canalizzazioni Principali (TI-GR).xlsx");
+
+            // Helper function to convert column number to letter
+            function columnNumberToLetter(colNum) {
+                let letter = '';
+                while (colNum > 0) {
+                    let mod = (colNum - 1) % 26;
+                    letter = String.fromCharCode(65 + mod) + letter;
+                    colNum = Math.floor((colNum - mod - 1) / 26);
+                }
+                return letter;
+            }
+            document.body.style.cursor = "default";
+        }
+
+        document.getElementById("main-panel-title").addEventListener("click", ()=>{
+            let activeResultText = document.querySelector(".result-active").children[1].textContent.trim()
+            let root = localStorage.getItem("root").trim()
+            let fullPath = root.substring(0, root.lastIndexOf("\\"))+"/"+activeResultText
+            window.navigator.clipboard.writeText(fullPath.trim().slice(1))
+        })
+        function createResults(results = data){
+            function getData(path){
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    if(file.webkitRelativePath === path){
+                        return file
+                        break
+                    }
+                }
+            }
+            const parent = document.getElementById("main-results-container")
+            parent.innerHTML = ""
+            for (let i = 0; i < results.length; i++) {
+                const relativePath= results[i].relativePath;
+                const result = document.createElement("div")
+                result.className = "result"
+                result.addEventListener("click", ()=>{
+                    const actives = document.querySelectorAll(".result-active")
+                    for (let j = 0; j < actives.length; j++) {
+                        const active = actives[j];
+                        active.classList.remove("result-active")
+                    }
+                    result.classList.add("result-active")
+                    const etichette = results[i].pdfInfos
+                    const file = getData(relativePath)
+                    const fullPath = localStorage.getItem("root").slice(1, -1)+"/"+file.name
+                    document.getElementById("main-panel-title").querySelector("p").textContent = file.name
+                    renderPDFFile(file)
+                    currentFile = file
+                    
+                    
+                    const dataParent = document.getElementById("main-panel-infos")
+                    dataParent.innerHTML=""
+                    if(etichette.length === 0){
+                        dataParent.innerHTML = `
+                            <p style="color: var(--error); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                                Non ci sono etichette
+                            </p>
+                        `;
+                    }
+                    let foundCoordinates = false
+                    for (let j = 0; j < etichette.length; j++) {
+                        const etichettaData = etichette[j];
+                        const etichetta = document.createElement("div")
+                        etichetta.className="etichetta"
+                        const etichettaTitle = document.createElement("div")
+                        etichettaTitle.className = "etichetta-title"
+                        etichettaTitle.textContent = "Etichetta " + (j + 1)
+                        etichettaTitle.addEventListener("click", ()=>{
+                            const pairs = etichettaTitle.parentElement.querySelectorAll(".etichetta-pair")
+                            let text = etichettaTitle.textContent + "\n"
+                            for (let k = 0; k < pairs.length; k++) {
+                                const pair = pairs[k];
+                                const key = pair.children[0].textContent
+                                const value = pair.children[1].textContent
+                                text = text + key + "\t" + value + "\n"
+                            }
+                            window.navigator.clipboard.writeText(text)
+                        })
+                        const etichettaContent = document.createElement("div")
+                        etichettaContent.className = "etichetta-content"
+                        const keys = Object.keys(etichettaData)
+                        for (let k = 0; k < keys.length; k++) {
+                            const key = keys[k]
+                            const value = etichettaData[key];
+
+                            if(key.toLowerCase() === "coordinate"){
+                                const coorinate = CHtoWGS(value)
+                                if(coorinate !== null){
+                                    foundCoordinates = true
+                                    flyTo(coorinate, undefined, undefined, relativePath)
+                                }
+                            }
+                            const etichettaPair = document.createElement("div")
+                            etichettaPair.className = "etichetta-pair"
+                            const etichettaKey = document.createElement("div")
+                            etichettaKey.className = "etichetta-key"
+                            etichettaKey.textContent = key
+                            etichettaKey.addEventListener("click", ()=>{
+                                navigator.clipboard.writeText(key + "\t" + value)
+                            })
+                            const etichettaValue = document.createElement("div")
+                            etichettaValue.className = "etichetta-value"
+                            etichettaValue.textContent = value
+                            etichettaValue.addEventListener("click", ()=>{
+                                navigator.clipboard.writeText(value)
+                            })
+                            etichettaPair.append(etichettaKey, etichettaValue)
+                            etichettaContent.append(etichettaPair)
+                        }
+                        etichetta.append(etichettaTitle, etichettaContent)
+                        dataParent.append(etichetta)
+                    }
+                    if(!foundCoordinates){
+                        flyTo([46.191355, 9.013880], undefined, undefined, relativePath)
+                    }
+                })
+                const resultImg = document.createElement("div")
+                resultImg.className = "img"
+                const resultTxt = document.createElement("div")
+                resultTxt.className = "result-text"
+                resultTxt.textContent = relativePath;
+                result.append(resultImg, resultTxt)
+                parent.append(result)
+            }
+        }
+
+        function Search(){
+            let queries = [];
+            let results = new Set()
+            
+            const searchbars = document.querySelectorAll(".searchbar")
+            let allEmpty = true
+
+            for (let i = 0; i < searchbars.length; i++) {
+                const searchbar = searchbars[i];
+                let search = JSON.parse(searchbar.dataset.settings)
+                if(search.value !== "")allEmpty = false
+                if(i===0){
+                    let data = search
+                    data.newLogic = null
+                    search = data
+                }
+                queries.push(search)
+            }
+            if(allEmpty){
+                results = new Set(data)
+            }else{
+                for (let i = 0; i < queries.length; i++) {
+                    const query = queries[i];
+                    if(query.newLogic === "AND"){
+                        if([...results].length === 0){
+                            results = new Set([])
+                        }else{
+                            let result = searchData(query)
+
+                            const resultSet = new Set(result);          // O(m)
+                            const items = [...results];          // copy to safely iterate
+
+                            for (let i = 0; i < items.length; i++) {    // O(n)
+                                const value = items[i];
+                                if (!resultSet.has(value)) {
+                                    results.delete(value);                  // O(1)
+                                }
+                            }
+                        }                
+                    }else if(query.newLogic === "OR" || query.newLogic === null){
+                        let result = searchData(query)
+                        if([...results].length === 0){
+                            results = new Set(result)
+                        }else{
+                            for (let j = 0; j < result.length; j++) {
+                                const string = result[j];
+                                results.add(string)
+                            }
+                        }
+                    }
+                }
+            }
+
+            function showResults(results){
+                /*if(results.length === 0){
+                    document.getElementById("main-results-container").insertAdjacentHTML("beforeend", `
+                        <p style="color: var(--error); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                            Non ci sono risultati
+                        </p>
+                    `);
+                }else{
+                    document.getElementById("main-results-container").querySelectorAll(":scope > p").forEach(p => p.remove());
+                }*/
+                if(results.length === data.length){
+                    for (let i = 0; i < results.length; i++) {
+                        const result = results[i];
+                        results[i] = result.relativePath
+                    }
+                }
+                if(results.length === 0){
+                    document.getElementById("main-results-title").children[0].textContent = "Non ci sono risultati!"
+                    document.getElementById("main-results-title").children[0].style.color = "var(--error)"
+                }else{
+                    document.getElementById("main-results-title").children[0].textContent = "Risultati: " + results.length
+                    document.getElementById("main-results-title").children[0].style.color = "var(--text)"
+                }
+                let resultDivs = document.getElementById("main-results-container").children
+                let number = 0 
+                for (let i = 0; i < resultDivs.length; i++) {
+                    const resultDiv= resultDivs[i];
+                    resultDiv.style.display = "none"
+                }
+                for (let i = 0; i < results.length; i++) {
+                    const result= results[i];
+                    for (let j = 0; j < resultDivs.length; j++) {
+                        const resultDiv= resultDivs[j];
+                        if(resultDiv.children[1].textContent === result){
+                            resultDiv.style.display = "flex"
+                            break
+                        }
+                    }
+                }
+
+                /*
+                for (let i = 0; i < resultDivs.length; i++) {
+                    const resultDiv = resultDivs[i];
+                    let result = results[number];
+                    if(typeof result === "object"){
+                        result = result.relativePath
+                    }
+                    if(result !== resultDiv.children[1].textContent){
+                        resultDiv.style.display = "none"
+                    }else{
+                        resultDiv.style.display = "flex"
+                        number++
+                    }
+                }*/
+                /*for (let i = 0; i < resultDivs.length; i++) {
+                    const resultDiv = resultDivs[i];
+                    console.warn(resultDiv.children[1].textContent)
+                }*/
+            }
+            
+            showResults([...results])
+
+            function getNotActiveFilters(activeFilters){
+                const allFilters = proprierties;
+                if(activeFilters.length === allFilters.length)return allFilters
+                let notActiveFilters = []
+                for (let i = 0; i < allFilters.length; i++) {
+                    const allFilter = allFilters[i];
+                    let matches = false
+                    for (let j = 0; j < activeFilters.length; j++) {
+                        const activeFilter = activeFilters[j];
+                        if(activeFilter === allFilter){
+                            matches = true
+                            break
+                        }
+                    }
+                    if(!matches){
+                        notActiveFilters.push(allFilter)
+                    }
+
+                }
+                return notActiveFilters
+            }
+
+            function searchData(query){
+                let matches = new Set()
+                for (let i = 0; i < data.length; i++) {
+                    if(!data[i].relativePath.endsWith(".pdf"))continue
+                    const dataPoint = data[i].pdfInfos;
+                    const queryFilters = getNotActiveFilters(query.searchFilters)
+                    for (let j = 0; j < queryFilters.length; j++) {
+                        const queryFilter = queryFilters[j];
+                        for (let k = 0; k < dataPoint.length; k++) {
+                            const etichetta = dataPoint[k];
+                            let etichettaValue = etichetta[queryFilter]//[key]
+                            if(etichettaValue !== undefined){
+                                //caseSensitive exactMatch NOT
+                                let match = false
+                                if(!query.exactMatch || query.value === ""){
+                                    if(!query.caseSensitive && query.value !== ""){
+                                        if(etichettaValue.toLowerCase().includes(query.value.toLowerCase()))match=true
+                                    }else{
+                                        if(etichettaValue.includes(query.value))match=true
+                                    }
+                                }else{
+                                    if(!query.caseSensitive){
+                                        if(etichettaValue.toLowerCase()===query.value.toLowerCase())match=true
+                                    }else{
+                                        if(etichettaValue===query.value)match=true
+                                    }
+                                }
+                                if(match){
+                                    matches.add(data[i].relativePath)
+                                }
+                            }
+                        }
+                    }
+                }
+                if(query.NOT){
+                    let newMatches = []
+                    for (let i = 0; i < data.length; i++) {
+                        const dataPath = data[i].relativePath;
+                        if(![...matches].includes(dataPath)){
+                            newMatches.push(dataPath)
+                        }
+                    }
+                    return newMatches
+                }else{
+                    return [...matches]
+                }
+            }
+        }
+
+        const filterSearchbars = document.querySelectorAll(".filters-menu-searchbar-search")
+        for (let i = 0; i < filterSearchbars.length; i++) {
+            const filterSearchbar = filterSearchbars[i];
+            function filterFilters(){
+                const filters = filterSearchbar.parentNode.nextElementSibling.nextElementSibling.querySelectorAll(":scope > *")
+                for (let j = 0; j < filters.length; j++) {
+                    const filter = filters[j];
+                    if(!filter.querySelector(".filters-menu-content-filter-name").textContent.toLowerCase().includes(filterSearchbar.value.toLowerCase()) && !filterSearchbar.value == ""){
+                        filter.style.display = "none"
+                    }else{
+                        filter.style.display = "flex"
+                    }
+                }
+            }
+            filterSearchbar.addEventListener("input", ()=>{
+                filterFilters()
+            })
+            filterSearchbar.nextElementSibling.addEventListener("click", ()=>{
+                filterSearchbar.value = ""
+                filterFilters()
+            })
+        }
+
+        function addSearchbar(caseSensitive = false, exactMatch = false, NOT = false, newLogic="AND", allSearchFilters=proprierties){
+            const optionsMenu = document.getElementById("options-menu")
+            const parent = document.getElementById("search-main")
+
+            const searchbar = document.createElement("div")
+            searchbar.dataset.settings = JSON.stringify({value: "", caseSensitive: caseSensitive, exactMatch: exactMatch, NOT: NOT, newLogic: newLogic, searchFilters: allSearchFilters})
+
+            const logic = document.createElement("div")
+            logic.textContent = newLogic
+            logic.addEventListener("click", ()=>{
+                if(logic.textContent === "OR"){
+                    logic.textContent = "AND"
+                }else{
+                    logic.textContent = "OR"
+                }
+                let attributes = getAttributes()
+                attributes.newLogic = logic.textContent
+                setAttributes(attributes)
+                Search()
+            })
+            const lens = document.createElement("div")
+            const search = document.createElement("input")
+            search.type = "text";
+            search.placeholder = "Cerca..."
+            search.addEventListener("click", ()=>{
+                search.select()
+            })
+            search.addEventListener("input", ()=>{
+                updateValueAttribute()
+                Search()
+            })
+            const cancel = document.createElement("button")
+            cancel.addEventListener("click", ()=>{
+                search.value = ""
+                updateValueAttribute()
+                Search()
+            })
+            const options = document.createElement("button")
+            options.setAttribute("popovertarget", "options-menu");
+            options.addEventListener("click", ()=>{
+                let attributes = getAttributes()
+                const keys = Object.keys(attributes)
+                optionsMenu.innerHTML = ""
+                for (let i = 0; i < keys.length; i++) {
+                    const key = keys[i]
+                    if(!(key === "caseSensitive" || key === "exactMatch" || key === "NOT")){continue}
+                    const value = attributes[key]
+
+                    const div = document.createElement("div")
+                    const label = document.createElement("label")
+                    if(key === "caseSensitive"){
+                        label.textContent = "Aa"
+                        label.setAttribute("title", "Differenzia maiuscole/minuscole");
+                    }else if(key === "exactMatch"){
+                        label.textContent = "Parola"
+                        label.setAttribute("title", "Controlla se il valore corrisponde esattamente alla ricerca (es: lato ≠ gelato)");
+                    }else{
+                        label.textContent = key
+                        label.setAttribute("title", "Cerca i risultati che NON corrispondono alla ricerca");
+                    }
+                    const checkbox = document.createElement("input")
+                    checkbox.type = "checkbox";
+                    if(value){
+                        checkbox.checked = true
+                    }
+                    div.append(label)
+                    label.append(checkbox)
+                    optionsMenu.append(div)
+                    checkbox.addEventListener("change", ()=>{
+                        attributes[key] = checkbox.checked
+                        setAttributes(attributes)
+                        const checkboxes = optionsMenu.querySelectorAll("input")
+                        let total = 0
+                        for (let i = 0; i < checkboxes.length; i++) {
+                            const checkbox = checkboxes[i];
+                            if(checkbox.checked){
+                                total+=2**i
+                            }
+                            options.style.backgroundImage = `url(Immagini/more-vertical${total}.svg)`
+                        }
+                        Search()
+                    })
+                }
+            })
+            const filters = document.createElement("button")
+            filters.setAttribute("popovertarget", "filters-menu")
+            const number = document.createElement("div")
+            number.className = "searchbar-filters-number"
+            number.style.display = "none"
+            filters.append(number)
+            function getNotActiveFilters(activeFilters){
+                const allFilters = proprierties;
+                let notActiveFilters = []
+                for (let i = 0; i < allFilters.length; i++) {
+                    const allFilter = allFilters[i];
+                    let matches = false
+                    for (let j = 0; j < activeFilters.length; j++) {
+                        const activeFilter = activeFilters[j];
+                        if(activeFilter === allFilter){
+                            matches = true
+                            break
+                        }
+                    }
+                    if(!matches){
+                        notActiveFilters.push(allFilter)
+                    }
+
+                }
+                return notActiveFilters
+            }
+            filters.addEventListener("click", ()=>{
+                const searchCancel = document.querySelectorAll(".filters-menu-searchbar-cancel")
+                searchCancel[0].click()
+                searchCancel[1].click()
+                generateFilters()
+                function generateFilters(){
+                    const contentDivs = document.querySelectorAll(".filters-menu-content");
+                    let attributes = getAttributes()
+                    let activeFilters = attributes.searchFilters
+                    let notActiveFilters = getNotActiveFilters(activeFilters)
+                    contentDivs[0].innerHTML = ""
+                    contentDivs[1].innerHTML = ""
+                    for (let i = 0; i < activeFilters.length; i++) {
+                        const activeFilter = activeFilters[i];
+                        createFilters(activeFilter, true)
+                    }
+                    for (let i = 0; i < notActiveFilters.length; i++) {
+                        const notActiveFilter = notActiveFilters[i];
+                        createFilters(notActiveFilter, false)
+                    }
+
+
+                    function createFilters(name, active){
+                        const filter = document.createElement("div")
+                        const cancel = document.createElement("div")
+                        cancel.textContent = "x"
+                        cancel.className = "filters-menu-content-filter-cancel"
+                        const filterName = document.createElement("div")
+                        filterName.textContent = name
+                        filterName.className = "filters-menu-content-filter-name"
+                        filter.append(cancel, filterName)
+                        if(active){
+                            filter.className = "filters-menu-content-filter-active"
+                            contentDivs[0].append(filter)
+                            filter.addEventListener("click", ()=>{
+                                for (let i = 0; i < activeFilters.length; i++) {
+                                    const activeFilter = activeFilters[i];
+                                    if(activeFilter === name){
+                                        activeFilters.splice(i, 1);
+                                        break
+                                    }
+                                }
+                                attributes.searchFilters = activeFilters
+                                setAttributes(attributes)
+                                if(activeFilters.length !== 0 && activeFilters.length !== proprierties.length){
+                                    number.style.display = "block"
+                                    number.textContent = getNotActiveFilters(activeFilters).length
+                                }else{
+                                    number.style.display = "none"
+                                }
+                                generateFilters()
+                                searchCancel[0].click()
+                                searchCancel[1].click()
+                                Search()
+                            })
+                        }else{
+                            filter.className = "filters-menu-content-filter-notActive"
+                            contentDivs[1].append(filter)
+                            filter.addEventListener("click", ()=>{
+                                activeFilters.unshift(name)
+                                attributes.searchFilters = activeFilters
+                                setAttributes(attributes)
+                                if(activeFilters.length !== 0 && activeFilters.length !== proprierties.length){
+                                    number.style.display = "block"
+                                    number.textContent = getNotActiveFilters(activeFilters).length
+                                }else{
+                                    number.style.display = "none"
+                                }
+                                generateFilters()
+                                searchCancel[0].click()
+                                searchCancel[1].click()
+                                Search()
+                            })
+                        }
+                    }
+                }
+            })
+            const remove = document.createElement("button")
+            remove.addEventListener("click", ()=>{
+                searchbar.remove()
+                if(parent.querySelectorAll(".searchbar").length === 0){
+                    addSearchbar()
+                }
+                Search()
+            })
+
+            searchbar.className = "searchbar"
+            logic.className = "searchbar-logic"
+            lens.className = "searchbar-lens"
+            search.className = "searchbar-search"
+            cancel.className = "searchbar-cancel"
+            options.className = "searchbar-options"
+            filters.className = "searchbar-filters"
+            remove.className = "searchbar-delete"
+
+            searchbar.append(logic, lens, search, cancel, options, filters, remove);
+            parent.append(searchbar)
+            Search()
+            function getAttributes(){
+                return JSON.parse(searchbar.dataset.settings)
+            }
+            function setAttributes(obj){
+                searchbar.dataset.settings = JSON.stringify(obj)
+            }
+            function updateValueAttribute(){
+                let attributes = getAttributes()
+                attributes.value = search.value
+                setAttributes(attributes)
+            }
+        }
+        document.getElementById("search-add").addEventListener("click", ()=>{
+            addSearchbar()
+        })
+        const logics = document.querySelectorAll(".searchbar-logic")
+        for (let i = 0; i < logics.length; i++) {
+            const logic = logics[i];
+            logic.addEventListener("click", ()=>{
+                if(logic.textContent === "OR"){
+                    logic.textContent = "AND"
+                }else{
+                    logic.textContent = "OR"
+                }
+            })
+        }
+        const inputs = document.getElementById("setup").querySelectorAll("input")
+        for (let i = 0; i < inputs.length; i++) {
+            const input = inputs[i];
+            input.addEventListener("click", ()=>{
+                input.select()
+            })
+        }
+        document.getElementById("setup-root-btn").addEventListener("click", () => {
+            const root = localStorage.getItem("root");
+            if (root === "" || root === undefined || root === null) {
+                document.getElementById("root-input").value = String.raw`\\smef02\pan_ac\630_BZ-07\8_Piani\canalizzazioni principali\pdf`;
+            } else {
+                document.getElementById("root-input").value = root;
+            }
+        });
+        document.getElementById("setup-carica-btn").addEventListener("click", ()=>{
+            const name = document.getElementById("name-input")
+            const root = document.getElementById("root-input")
+            let error = false
+            if(name.value.trim() == "" ){
+                name.style.borderColor = "var(--error)";
+                name.style.borderTopColor = "var(--error-light)"
+                error = true
+            }else{
+                name.style.borderColor = "var(--success)";
+                name.style.borderTopColor = "var(--success-light)"
+            }
+            if(root.value.trim() == "" ){
+                root.style.borderColor = "var(--error)";
+                root.style.borderTopColor = "var(--error-light)"
+                error = true
+            }else{
+                root.style.borderColor = "var(--success)";
+                root.style.borderTopColor = "var(--success-light)"
+            }
+            if(error){
+                return
+            }
+            navigator.clipboard.writeText(document.getElementById("root-input").value);
+            localStorage.setItem("root", document.getElementById("root-input").value)
+            localStorage.setItem("name", document.getElementById("name-input").value)
+            folderInput.value = "";
+            folderInput.click()
+        })
+        const themeBtn = document.querySelector("#theme-input")
+        themeBtn.addEventListener('change', ()=>{
+            const theme = themeBtn.value;
+            localStorage.setItem('theme', theme);
+            applyTheme(theme);
+        })
+
+        const mapOptionDivs = document.querySelectorAll(".map-option")
+        for (let i = 0; i < mapOptionDivs.length; i++) {
+            const mapOptionDiv = mapOptionDivs[i]
+            mapOptionDiv.addEventListener("click", ()=>{
+                const input = mapOptionDiv.querySelector("input");
+                if(!input.checked){
+                    input.checked = true
+                }else{
+                    if(input.type !== "radio"){
+                        input.checked = false
+                    }
+                }
+                changeMap()
+            })
+        }
+
+        function applyTheme(){
+            const theme = localStorage.getItem('theme') || 'system';
+            localStorage.setItem('theme', theme);
+            const newTheme = localStorage.getItem('theme');
+            if(newTheme == 'system'){
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+            }else{
+                document.documentElement.setAttribute('data-theme', newTheme);
+            }
+            
+            let targetValue;
+
+            if (newTheme === "system") {
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                targetValue = prefersDark ? "mapDark" : "mapLight";
+            } else if (newTheme === "dark") {
+                targetValue = "mapDark";
+            } else {
+                targetValue = "mapLight";
+            }
+            // Select the radio in the group that has that value
+            setTimeout(() => {
+                if(!document.getElementById("satelliteLayer").checked){
+                    const radio = document.querySelector(`input[name="mapOption"][value="${targetValue}"]`).click();
+                }
+            }, 2);            
+        }
+        applyTheme()
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+            applyTheme()
+        });
+
+        if(localStorage.getItem("phase") == "main"){
+            ui("main")
+        }else{
+            ui("setup")
+        }
+
+
+        // Open (or create) database and store
+        function openDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open("ARCCP database", 1);
+
+                request.onupgradeneeded = () => {
+                    const db = request.result;
+                    if (!db.objectStoreNames.contains("store")) {
+                        db.createObjectStore("store");
+                    }
+                };
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // Save data
+        async function save(key, value) {
+            const db = await openDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction("store", "readwrite");
+                const store = tx.objectStore("store");
+                const req = store.put(value, key);
+
+                req.onsuccess = () => resolve(true);
+                req.onerror = () => reject(req.error);
+
+                tx.oncomplete = () => db.close();
+            });
+        }
+
+        // Get data
+        async function get(key) {
+            const db = await openDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction("store", "readonly");
+                const store = tx.objectStore("store");
+                const req = store.get(key);
+
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+
+                tx.oncomplete = () => db.close();
+            });
+        }
+
+
+    
+        function ui(phase, onlyUi = false){
+            const children = document.getElementById("setup-card").querySelectorAll(':scope > *');
+            const loading = document.getElementById("loading-section")
+            const setup = document.getElementById("setup")
+            const main = document.getElementById("main")
+            const visualizePdfScreen = document.getElementById("visualize-pdf-screen")
+            if(phase === "setup"){
+                document.getElementById("logo").style.top = "7vh"
+                document.getElementById("logo").style.left = "8vh"
+                main.style.display = "none"
+                main.style.height = "100vh"
+                main.style.width= "0%"
+                setup.style.display = "flex"
+                visualizePdfScreen.style.display = "none"
+                for (let i = 0; i < children.length; i++) {
+                    const child = children[i];
+                    if(i!=0){
+                        child.style.display = "flex"
+                    }else{
+                        child.textContent = "Setup"
+                    }
+                }
+                loading.style.display = "none"
+                const loadinInfos = document.querySelectorAll(".loading-infos")
+                for (let i = 0; i < loadinInfos.length; i++) {
+                    const loadinInfo = loadinInfos[i];
+                    loadinInfo.style.width = "0%"
+                }
+                document.getElementById("loading-current").style.display = "none"
+                document.getElementById("loading-current").style.width = "1%"
+                document.getElementById("setup-card").style.width = "60%"
+                document.getElementById("setup-card").style.height = "fit-content"
+
+                const inputs = setup.querySelectorAll("input")
+                for (let i = 0; i < inputs.length; i++) {
+                    const input = inputs[i];
+                    input.value = ""
+                    input.style.border = "var(--border-card)"
+                }
+                if(localStorage.getItem("theme") == "system"){
+                    document.getElementById("theme-input").value = "system"
+                }else if(localStorage.getItem("theme") == "light"){
+                    document.getElementById("theme-input").value = "light"
+                }else{
+                    document.getElementById("theme-input").value = "dark"
+                }
+            }else if(phase === "loading"){
+                document.getElementById("logo").style.top = "7vh"
+                document.getElementById("logo").style.left = "8vh"
+                visualizePdfScreen.style.display = "none"
+                setup.style.display = "flex"
+                document.getElementById("loading").style.background= "conic-gradient(from 0deg, var(--color1) 0% 0%,var(--bg-light) 0% 100%)";
+                document.getElementById("loading-current").children[1].textContent = ". . ."
+
+                for (let i = 0; i < children.length; i++) {
+                    const child = children[i];
+                    if(i!=0){
+                        child.style.display = "none"
+                    }else{
+                        child.textContent = "Caricamento . . ."
+                    }
+                }
+                loading.style.display = "flex"
+                const loadinInfos = document.querySelectorAll(".loading-infos")
+                for (let i = 0; i < loadinInfos.length; i++) {
+                    const loadingInfo = loadinInfos[i];
+                    loadingInfo.style.width = "calc(32% - 1.5rem)"
+                    loadingInfo.children[1].textContent = "0/0"
+                }
+                document.getElementById("loading-current").style.display = "flex"
+                document.getElementById("loading-current").style.width = "100%"
+                document.getElementById("setup-card").style.width = "95%"
+                document.getElementById("setup-card").style.height = "90%"
+                
+
+
+            }else if(phase === "main"){
+                document.getElementById("logo").style.top = "2vmin"
+                document.getElementById("logo").style.left = "2vmin"
+                setup.style.display = "none"
+                main.style.display = "flex"
+                main.style.height = "100vh"
+                main.style.width= "100%"
+                visualizePdfScreen.style.display = "none"
+                if(!onlyUi){
+                    Main();
+                }
+            }else if(phase === "visualize-pdf-screen"){
+                setup.style.display = "none";
+                main.style.display = "none"
+                visualizePdfScreen.style.display = "flex"
+            }
+        }
+        
+        function multiThread(task, array, threads=Math.max(navigator.hardwareConcurrency, 1)){
+            done = 0
+            let root = localStorage.getItem("root")
+            if(root.startsWith('"') || root.startsWith("'")){
+                root = root.slice(1, -1)
+            }
+            root = root.slice(0, root.lastIndexOf("\\")+1)
+            function loadingScreen(done = 0, total = 0, workers, threads, relativePath=""){
+                //if path === "" then don't update visual pathnamein html
+                const path = root + relativePath
+                const percentage = Math.floor((done * 10000) / total) / 100;
+                const loadingInfos = document.querySelectorAll(".loading-infos")
+                if(percentage != 100){
+                    document.getElementById("loading").style.background = `conic-gradient(from 0deg, var(--color1) 0% ${percentage + "%"},var(--bg-light) ${percentage + "%"} 100%)`
+                }else{
+                    document.getElementById("loading").style.background = `conic-gradient(from 0deg, var(--success) 0% ${percentage + "%"},var(--bg-light) ${percentage + "%"} 100%)`
+                }
+                document.getElementById("loading-content").textContent = percentage + "%"
+                loadingInfos[0].children[1].textContent = `${workers}/${threads}`
+                loadingInfos[1].children[1].textContent = `${done}/${total}`
+                if(relativePath !== ""){
+                    document.getElementById("loading-current").children[1].textContent = path
+                }
+            }
+            function splitIntoN(arrayLength, N) {
+                if(arrayLength <= N){
+                    let indices = []
+                    for (let i = 0; i < arrayLength; i++) {
+                        indices.push([i, i+1])
+                    }
+                    return indices
+                }
+                let remainder = arrayLength%N;
+                let parts = Math.floor(arrayLength/N)
+                let indices = []
+                let lastIndex = 0
+                for (let i = 0; i < N; i++) {
+                    if(remainder >= 0){
+                        indices.push([lastIndex, lastIndex+parts+1])
+                        lastIndex = lastIndex+parts+1
+                        remainder--
+                    }else{
+                        indices.push([lastIndex, lastIndex+parts])
+                        lastIndex = lastIndex+parts
+                    }
+                }
+                return indices
+            }
+
+
+
+
+            if(task == "pdfRead"){
+                let proprierties = new Set();
+                function addPropertyFast(str) {
+                    if (!proprierties.has(str)) {
+                        proprierties.add(str);
+                        return true;
+                    }
+                    return false;
+                }
+                let data = []
+                const workerCode = `
+                    importScripts("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js");
+                    importScripts("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js");
+                    //pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+                    self.onmessage = (e) => {
+                        const files = e.data;
+
+                        let proprietiesSet = new Set();
+
+                        function addPropertyFast(str) {
+                            if (!proprietiesSet.has(str)) {
+                                proprietiesSet.add(str);
+                                return true;
+                            }
+                            return false;
+                        }
+
+                        (async () => {
+                            for (let i = 0; i < files.length; i++) {
+                                const fileObject = files[i];
+                                if(!fileObject.name.endsWith(".pdf")){
+                                    postMessage(["file done", {relativePath: fileObject.webkitRelativePath, pdfInfos: null}]);
+                                    continue
+                                }
+                                let buffer = new Uint8Array(new FileReaderSync().readAsArrayBuffer(fileObject));
+
+                                try {
+                                    const pdf = await pdfjsLib.getDocument({
+                                        data: buffer,
+                                        workers: null,
+                                        disableRange: true,            // no range requests (local files)
+                                        disableStream: true,           // no streaming
+                                        disableAutoFetch: true,        // no lookahead fetch
+                                        disableFontFace: true,         // don't load fonts at all
+                                        useSystemFonts: false,         // no system fonts
+                                        fontExtraProperties: false,    // skip font metrics
+                                        enableXfa: false,              // disable XFA form support
+                                        maxImageSize: 0,               // skip all images
+                                        isEvalSupported: false,        // no dynamic code execution
+                                        stopAtErrors: true,            // fail fast on errors
+                                        useWasm: true,                 // keep WASM for parsing speed
+                                    }).promise;
+                                    let textContent = '';
+
+                                    let data = {
+                                        relativePath: fileObject.webkitRelativePath,
+                                        pdfInfos: []
+                                    }
+
+                                    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                                        const page = await pdf.getPage(pageNum);
+                                        const annotations = await page.getAnnotations();
+
+                                        for (let i = 0; i < annotations.length; i++){
+                                            const annotation = annotations[i];
+                                            const lines = annotation.textContent
+                                            let annotationInfos = {}
+
+                                            for (let j = 0; j < lines.length; j++){
+                                                const line = lines[j]
+                                                const separatorIndex = line.indexOf(":")
+                                                if(separatorIndex != -1){
+                                                    const key = line.slice(0, separatorIndex).trim()
+                                                    let value = line.slice(separatorIndex + 1).trim()
+                                                    addPropertyFast(key)
+                                                    if(j == lines.length-1){
+                                                        annotationInfos[key] = value
+                                                        break
+                                                    }
+                                                    let nextLine = j+1
+                                                    function addNextLine(){
+                                                        if(lines[nextLine].indexOf(":") == -1 && lines[nextLine] != undefined){
+                                                            value = value + " " + lines[nextLine].trim()
+                                                            nextLine+=1
+                                                            addNextLine()
+                                                        }
+                                                    }
+                                                    addNextLine()
+                                                    value = value.trim()
+                                                    annotationInfos[key] = value
+                                                }
+                                            }
+                                            data.pdfInfos.push(annotationInfos)
+                                        }
+                                    }
+                                    data.proprierties = Array.from(proprietiesSet)
+                                    //console.warn (data)
+                                    postMessage(["pdf done", data]);
+                                    buffer = null
+                                } catch (err) {
+                                    //console.error({relativePath: fileObject.webkitRelativePath, error: err.message})
+                                }
+                            }
+                            postMessage("worker done");
+                            self.close();
+                        })();
+                    };
+
+                `;
+                if(Math.ceil(Math.abs(threads)) <= Math.max(navigator.hardwareConcurrency, 1) && threads != 0){
+                    threads = Math.ceil(Math.abs(threads))
+                }else{
+                    threads = Math.max(navigator.hardwareConcurrency, 1)
+                }
+                loadingScreen(0 , array.length, 0, threads)
+                const indices = splitIntoN(array.length, threads)
+                let workers = 0
+                //console.warn(indices)
+                for (let i = 0; i < indices.length; i++) {
+                    const indexes = indices[i];
+                    workers++
+                    //console.log(array.slice(indexes[0], indexes[1])) //pass this to a new dedicated worker
+                    const worker = new Worker(URL.createObjectURL(new Blob([workerCode],{type:'application/javascript'}))); // dedicated worker
+                    worker.onmessage = (e) => {
+                        const response = e.data
+                        if(response[0] === "pdf done" || response[0] === "file done"){
+                            if(response[0] === "pdf done"){
+                                for (let i = 0; i < response[1].proprierties.length; i++) {
+                                    const key = response[1].proprierties[i];
+                                    addPropertyFast(key)
+                                }
+                            }
+                            done++
+                            loadingScreen(done, array.length, workers, threads, response[1].relativePath)
+                            data.push({pdfInfos: response[1].pdfInfos, relativePath: response[1].relativePath})
+                        }else if(response === "worker done"){
+                            workers--
+                            loadingScreen(done, array.length, workers, threads)
+                            if(workers == 0){
+                                console.warn("all done")
+                                localStorage.setItem("phase", "main")
+                                async function saveData(data) {
+                                    document.getElementById("loader").style.display="inline-block"
+                                    let newProps = [...proprierties]
+                                    newProps = newProps.sort()
+                                    await save("ARCCP proprierties", newProps)
+                                    function compareNaturalStrings(a, b) {
+                                        const regex = /(\d+(?:\.\d+)?|\D+)/g;
+                                        const partsA = a.match(regex);
+                                        const partsB = b.match(regex);
+                                        const len = Math.min(partsA.length, partsB.length);
+
+                                        for (let i = 0; i < len; i++) {
+                                            const partA = partsA[i];
+                                            const partB = partsB[i];
+
+                                            const numA = parseFloat(partA);
+                                            const numB = parseFloat(partB);
+                                            const isNumA = !isNaN(numA);
+                                            const isNumB = !isNaN(numB);
+
+                                            if (isNumA && isNumB) {
+                                            if (numA !== numB) return numA - numB;
+                                            } else {
+                                            const cmp = partA.localeCompare(partB, undefined, { sensitivity: "base" });
+                                            if (cmp !== 0) return cmp;
+                                            }
+                                        }
+
+                                        return partsA.length - partsB.length;
+                                    }
+
+                                    function comparePaths(aPath, bPath) {
+                                        const aParts = aPath.split(/[\\/]/);
+                                        const bParts = bPath.split(/[\\/]/);
+                                        const len = Math.min(aParts.length, bParts.length);
+
+                                        for (let i = 0; i < len; i++) {
+                                            const cmp = compareNaturalStrings(aParts[i], bParts[i]);
+                                            if (cmp !== 0) return cmp;
+                                        }
+
+                                        return aParts.length - bParts.length;
+                                    }
+
+                                    function quickSortInPlace(arr, left, right) {
+                                        if (left >= right) return;
+
+                                        const pivot = arr[(left + right) >> 1].relativePath;
+                                        let i = left;
+                                        let j = right;
+
+                                        while (i <= j) {
+                                            while (comparePaths(arr[i].relativePath, pivot) < 0) i++;
+                                            while (comparePaths(arr[j].relativePath, pivot) > 0) j--;
+
+                                            if (i <= j) {
+                                            const tmp = arr[i];
+                                            arr[i] = arr[j];
+                                            arr[j] = tmp;
+                                            i++;
+                                            j--;
+                                            }
+                                        }
+
+                                        if (left < j) quickSortInPlace(arr, left, j);
+                                        if (i < right) quickSortInPlace(arr, i, right);
+                                    }
+
+                                    function sortByRelativePath(arr) {
+                                        quickSortInPlace(arr, 0, arr.length - 1);
+                                    }
+                                    console.log(data)
+                                    sortByRelativePath(data);
+
+                                    console.log(data.map(a => a.relativePath));
+                                    await save("ARCCP database", data);
+                                    document.getElementById("loader").style.display="none"
+                                    ui("main")
+                                }
+                                saveData(data);
+                            }
+                        }
+                    }
+
+                    // send File objects directly
+                    worker.postMessage(array.slice(indexes[0], indexes[1]));
+                    
+
+                }
+            }
+        }
+
+        folderInput.addEventListener("change", ()=>{
+            if(folderInput.files.length === 0){
+                alert("Seleziona una cartella!")
+            }else{
+                files = Array.from(folderInput.files);
+                if(!ricarica){
+                    console.log("now")
+                    ui("loading")
+                    multiThread("pdfRead", files)
+                }else{
+                    ricarica = false
+                    Main()
+                }
+                document.getElementById("loader").style.display = "none"
+            }
+        });
+
+        async function Main() {
+            if(files !== null){//temporary
+                console.log("ciao")
+                ui("main", true)
+                data = await get("ARCCP database");
+                proprierties = await get("ARCCP proprierties")
+                console.error(data)
+                console.error(proprierties)
+                createResults()
+                createMarkers(data, proprierties)
+
+
+
+
+
+
+                if(document.getElementById("search-main").querySelectorAll(".searchbar").length == 0){
+                    addSearchbar()
+                }
+                //hide initial upload popup (to visualize pdfs)
+            }else{
+                ui("visualize-pdf-screen")
+            }  
+        }
+        document.getElementById("main-visualizza-pdf-btn").addEventListener("click", ()=>{
+            if(!document.getElementById("aggiorna-dati").checked){
+                navigator.clipboard.writeText(localStorage.getItem("root"))
+                ricarica = true
+                folderInput.click()
+            }else{
+                ricarica = false
+                ui("setup")
+                document.getElementById("name-input").value = localStorage.getItem("name")
+                document.getElementById("theme-input").value = localStorage.getItem("theme")
+                document.getElementById("root-input").value = localStorage.getItem("root")
+                //folderInput.click()
+            }
+            
+        })
+    </script>
+  <script>
+    document.getElementById("marker-info-tabs-result").addEventListener("click", ()=>{
+        document.getElementById("marker-info-title-result").style.display = "flex"
+        document.getElementById("marker-info-title-current").style.display = "none"
+
+        document.getElementById("marker-info-tabs-result").style.textDecoration = "underline"
+        document.getElementById("marker-info-tabs-current").style.textDecoration = "none"
+
+        document.getElementById("marker-info-etichette-result").style.display = "flex"
+        document.getElementById("marker-info-etichette-current").style.display = "none"
+    })
+    document.getElementById("marker-info-tabs-current").addEventListener("click", ()=>{
+        document.getElementById("marker-info-title-result").style.display = "none"
+        document.getElementById("marker-info-title-current").style.display = "flex"
+
+        document.getElementById("marker-info-tabs-result").style.textDecoration = "none"
+        document.getElementById("marker-info-tabs-current").style.textDecoration = "underline"
+
+        document.getElementById("marker-info-etichette-result").style.display = "none"
+        document.getElementById("marker-info-etichette-current").style.display = "flex"                   
+    })
+    let markers = []
+
+    const layerPanel = document.getElementById('map-options');
+    const markerInfo = document.getElementById('marker-info');
+    L.DomEvent.disableClickPropagation(layerPanel);
+    L.DomEvent.disableScrollPropagation(layerPanel);
+    L.DomEvent.disableClickPropagation(markerInfo);
+    L.DomEvent.disableScrollPropagation(markerInfo);
+
+    const map = L.map('map', {zoomControl: false, tileSize: 256, detectRetina: true}).setView([46.191355, 9.013880], 5);
+    
+
+    function flyTo(latlng, zoom = 18, multiplier = 2, change = "") {
+        // 1. Start the real flyTo to trigger Leaflet’s duration calculation
+        map.flyTo(latlng, zoom);
+
+        // 2. Grab the duration Leaflet just calculated
+        let originalDuration = map._flyToDuration;
+
+        // 3. If too close (no animation), just keep the instant jump
+        if (originalDuration === undefined) {
+            originalDuration = 0.5; // nothing to do
+            originalDuration = Math.abs(zoom-map.getZoom())*0.1*originalDuration
+        }
+
+        // 4. Cancel current animation
+        map.stop(); // stops pan/zoom animation
+
+        // 5. Restart with doubled (or custom) duration
+        const newDuration = originalDuration * multiplier;
+        map.flyTo(latlng, zoom, { duration: newDuration, animate: true});
+
+        function setActiveMarker(id) {
+            // 1. Reset **every** marker to the default icon
+            markers.forEach(item => {
+                item._markers.forEach(m => m.setIcon(defaultMarker));
+            });
+
+            // 2. If an id is supplied, highlight the matching one(s)
+            if (id === null) return;   // just a full reset
+
+            const target = markers.find(item => item.id === id);
+            if (target) {
+                target._markers.forEach((m) => {
+                    m.setIcon(activeMarker)
+                    m.setZIndexOffset(9999999999); 
+                });
+            }
+        }
+        if(change !== ""){
+            setActiveMarker(change)
+        }
+    }
+
+    window.addEventListener("resize", () => {
+        map.invalidateSize()
+    });
+
+
+    const defaultMarker = L.icon({
+        iconUrl: 'Immagini/blue-marker.png',  // path to your local image
+        iconSize: [25, 41],              // half the original size
+        iconAnchor: [12.5, 41],          // bottom-center of icon (half width, full height)
+        popupAnchor: [0, -39] 
+    });
+    const activeMarker = L.icon({
+        iconUrl: 'Immagini/red-marker.png',  // path to your local image
+        iconSize: [25, 41],              // half the original size
+        iconAnchor: [12.5, 41],          // bottom-center of icon (half width, full height)
+        popupAnchor: [0, -39],
+    });
+
+    L.control.scale({
+      position: 'bottomleft', // bottomleft | bottomright | topleft | topright
+      imperial: false,  // shows miles/feet
+      metric: true     // shows meters/km
+    }).addTo(map);
+
+    const markerCluster = L.markerClusterGroup({
+        disableClusteringAtZoom: 15 // no clustering at zoom 15 or higher
+    });
+
+    const layers = {
+        
+    }
+    // 1️⃣ Swiss border (administrative boundaries)
+    let swissBorder = L.tileLayer.wms('https://wms.geo.admin.ch/',{
+        layers: 'ch.swisstopo.swissboundaries3d-land-flaeche.fill', // national border
+        format: 'image/png',
+        transparent: true,
+        attribution: '&copy; <a href="https://www.swisstopo.admin.ch">swisstopo</a>',
+        maxZoom: 20
+    });
+    let cantonsLayer = L.tileLayer.wms('https://wms.geo.admin.ch/',{
+        layers: 'ch.swisstopo.swissboundaries3d-kanton-flaeche.fill',
+        format: 'image/png',
+        transparent: true,
+        attribution: '&copy; <a href="https://www.swisstopo.admin.ch">swisstopo</a>',
+        maxZoom: 20
+    });
+
+    // 3️⃣ Municipalities
+    let comuniLayer = L.tileLayer.wms('https://wms.geo.admin.ch/',{
+        layers: 'ch.swisstopo.swissboundaries3d-gemeinde-flaeche.fill',
+        format: 'image/png',
+        transparent: true,
+        attribution: '&copy; <a href="https://www.swisstopo.admin.ch">swisstopo</a>',
+        minZoom: 10,
+        maxZoom: 20
+    });
+
+    let swisstopoSatellite = L.tileLayer('https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.swissimage/default/current/3857/{z}/{x}/{y}.jpeg',{
+        attribution: '&copy; <a href="https://www.swisstopo.admin.ch/en/home.html">swisstopo</a>',
+        maxZoom: 20
+    });
+    let constructionLayer = L.tileLayer.wms('https://wms.geo.admin.ch/', {
+        layers: 'ch.bfs.gebaeude_wohnungs_register',
+        format: 'image/png',
+        transparent: true,
+        attribution: '&copy; <a href="https://www.swisstopo.admin.ch/en/home.html">swisstopo</a>',
+        minZoom: 18,
+        maxZoom: 20,
+        version: '1.3.0',
+    })
+    //swisstopoSatellite.addTo(mapInstance);
+
+    let mapLight = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
+        attribution: '©OpenStreetMap, ©CartoDB',
+        maxZoom: 20,
+    });
+
+    let mapDark = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png', {
+        attribution: '©OpenStreetMap, ©CartoDB',
+        maxZoom: 20,
+    });
+    let mapDarkLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/dark_only_labels/{z}/{x}/{y}{r}.png',{
+        attribution: '&copy; OpenStreetMap &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        opacity: 1, // you can adjust label brightness/transparency
+        maxZoom: 20,
+    });
+    let mapLightLabels = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/light_only_labels/{z}/{x}/{y}{r}.png',{
+        attribution: '&copy; OpenStreetMap &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        opacity: 1 ,// you can adjust label brightness/transparency
+        maxZoom: 20
+    });
+    swisstopoSatellite.addTo(map)
+    mapLightLabels.addTo(map)
+    constructionLayer.addTo(map)
+
+    map.on("click", async (e) => {
+        const isMarker = e.originalEvent.target.classList.contains('leaflet-marker-icon');
+        if (!isMarker) {
+            document.getElementById("marker-info").style.display = "none"
+        }
+        if (map.hasLayer(constructionLayer) && map.getZoom() >= 18) {
+            document.getElementById("map").style.cursor = "progress"
+            const url = getFeatureInfoUrl(e.latlng, map);
+            const response = await fetch(url);
+            const data = await response.json();
+            if(data.features.length !== 0){
+                const properties = data.features[0].properties
+                const infos = await getBuildingInfo(properties.id)
+                document.getElementById("map").style.cursor = "grab"
+                const latlng = LV95toWGS84(infos.data["Coordinata N dell'entrata"], infos.data["Coordinata E dell'entrata"])
+                flyTo(latlng, map.getZoom())
+                let popup = L.popup()
+                    .setLatLng(latlng)
+                    .setContent(createBuildingPopup(infos, latlng, properties.id))
+                    .openOn(map); // opens the popup
+
+                // Optional: listen to the 'remove' event (fires when closed)
+                popup.on('remove', () => {
+                    popup.remove()
+                    popup = null
+                });
+                map.on("zoomend", () => {
+                    if (map.getZoom() < 18) {
+                        popup.remove(); // or map.closePopup()
+                    }
+                });
+            }else{
+                document.getElementById("map").style.cursor = "not-allowed"
+                setTimeout(() => {
+                    document.getElementById("map").style.cursor = "grab"
+                }, 200);
+            }
+        }
+    });
+    function getFeatureInfoUrl(latlng, map) {
+        const point = map.latLngToContainerPoint(latlng, map.getZoom());
+        const size = map.getSize();
+        const bounds = map.getBounds();
+        const sw = bounds.getSouthWest();
+        const ne = bounds.getNorthEast();
+        const crs = map.options.crs;
+        const sw_3857 = crs.project(sw);
+        const ne_3857 = crs.project(ne);
+
+        const bbox = [sw_3857.x, sw_3857.y, ne_3857.x, ne_3857.y].join(',');
+
+        const params = {
+            service: 'WMS',
+            version: '1.3.0',
+            request: 'GetFeatureInfo',
+            layers: 'ch.bfs.gebaeude_wohnungs_register',
+            query_layers: 'ch.bfs.gebaeude_wohnungs_register',
+            bbox: bbox,
+            width: size.x,
+            height: size.y,
+            info_format: 'application/json',
+            i: Math.round(point.x),
+            j: Math.round(point.y),
+            crs: 'EPSG:3857',
+        };
+
+        const queryString = new URLSearchParams(params).toString();
+        return `https://wms.geo.admin.ch/?${queryString}`;
+    }
+    async function getBuildingInfo(id) {
+        const url = `https://api3.geo.admin.ch/rest/services/ech/MapServer/ch.bfs.gebaeude_wohnungs_register/${id}/extendedHtmlPopup?lang=it`;
+        console.error(url)
+
+        const response = await fetch(url);
+        const html = await response.text();
+
+        // Parse HTML text
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+
+        // Find all table rows
+        const rows = doc.querySelectorAll("tr");
+
+        // Convert rows to object
+        const data = {};
+        let linkHref = null; // store the link if present
+
+        rows.forEach(row => {
+            const cells = row.querySelectorAll("td");
+            if (cells.length >= 2) {
+                const key = cells[0].textContent.trim();
+                const valueCell = cells[1];
+                const valueText = valueCell.textContent.trim();
+
+                if (valueText === "Link verso l'oggetto") {
+                    // Extract href from the <a> inside this cell
+                    const aTag = valueCell.querySelector("a");
+                    if (aTag) linkHref = aTag.href;
+                } else {
+                    data[key] = valueText;
+                }
+            }
+        });
+        return { data, linkHref };
+    }
+    function LV95toWGS84(N, E) {
+        // 1. Shift origin
+        const y = (E - 2600000) / 1000000;
+        const x = (N - 1200000) / 1000000;
+        
+        // 2. Apply formula for latitude
+        let lat = 16.9023892
+        + 3.238272 * x
+        - 0.270978 * Math.pow(y, 2)
+        - 0.002528 * Math.pow(x, 2)
+        - 0.0447 * Math.pow(y, 2) * x
+        - 0.0140 * Math.pow(x, 3);
+        
+        // 3. Apply formula for longitude
+        let lng = 2.6779094
+        + 4.728982 * y
+        + 0.791484 * y * x
+        + 0.1306 * y * Math.pow(x, 2)
+            - 0.0436 * Math.pow(y, 3);
+            
+            // 4. Convert from sexagesimal seconds to decimal degrees
+            lat = lat * 100 / 36;
+            lng = lng * 100 / 36;
+            
+            return [lat, lng];
+        }
+
+        function createBuildingPopup(infos, latlng, id){
+            const container = document.createElement("div")
+            container.className = "buildingInfos"
+            const title = document.createElement("div")
+            title.innerHTML = "Informazioni edificio";
+            title.onclick = () => window.open(`https://api3.geo.admin.ch/rest/services/ech/MapServer/ch.bfs.gebaeude_wohnungs_register/${id}/extendedHtmlPopup?lang=it`, '_blank');
+            title.className = "buildingInfos-title"
+            const mapOptions = document.createElement("div")
+            mapOptions.className = "buildingInfos-mapOptions"
+            const google = document.createElement("div")
+            google.textContent = "Vedi su Google"
+            google.onclick = () => openGoogleMaps(latlng[0], latlng[1]);
+            const mapGeoAdmin = document.createElement("div")
+            mapGeoAdmin.textContent = "Vedi su map.geo.admin"
+            mapGeoAdmin.onclick = () => window.open(infos.linkHref, '_blank');
+            mapOptions.append(mapGeoAdmin, google)
+            const dataDiv = document.createElement("div")
+            dataDiv.className = "buildingInfos-data"
+            container.append(title, mapOptions, dataDiv)
+            if(infos.data["Numero dell’entrata dell’edificio"] === undefined){
+                infos.data["Numero dell’entrata dell’edificio"] = ""
+            }
+            if(infos.data["Nome della via IT"] === undefined){
+                infos.data["Nome della via IT"] = ""
+            }
+            const data = {
+                "Comune": infos.data["Nome del Comune"],
+                "Via": infos.data["Nome della via IT"] + " " + infos.data["Numero dell’entrata dell’edificio"],
+                "Abitazioni": infos.data["Quantità delle registrazioni di abitazioni"],
+                "Stato costruzione": infos.data["Stato dell'edificio"],
+                "Categoria": infos.data["Categoria di edificio"],
+                "EGID": infos.data["Identificatore federale dell’edificio (EGID)"],
+            }
+            const keys = Object.keys(data)
+            for (let i = 0; i < keys.length; i++) {
+                const key = keys[i];
+                let value = data[key]
+                if(value === undefined || value.trim() === ""){
+                    value = ""
+                }
+                const pair = document.createElement("div")
+                pair.className="buildingInfos-pair"
+                const keyDiv = document.createElement("div")
+                keyDiv.textContent = key
+                keyDiv.onclick = ()=> {
+                    window.navigator.clipboard.writeText(key+"\t"+value)
+                }
+                const valueDiv = document.createElement("div")
+                valueDiv.textContent = value
+                valueDiv.onclick = ()=>{
+                    window.navigator.clipboard.writeText(value)
+                }
+                pair.append(keyDiv, valueDiv)
+                container.append(pair)
+            }
+            return container
+        }
+        function openGoogleMaps(lat, lng) {
+            if (map) {
+                const zoom = map.getZoom();
+                const googleLink = `https://www.google.com/maps/@${lat},${lng},${zoom}z/data=!5m1!1e3`;
+
+                window.open(googleLink, '_blank');
+            }
+        }
+        
+        function changeMap(){
+            const layers = {
+                swissBorder: swissBorder,
+                cantonsLayer: cantonsLayer,
+                comuniLayer: comuniLayer,
+                swisstopoSatellite: swisstopoSatellite,
+                constructionLayer: constructionLayer,
+                mapLight: mapLight,
+                mapDark: mapDark,
+                mapLightLabels: mapLightLabels,
+                mapDarkLabels: mapDarkLabels
+            }
+        function clearAllLayers() {
+            map.eachLayer(function (layer) {
+                if (!(layer instanceof L.Marker)) {
+                    map.removeLayer(layer);
+                }
+            });
+        }
+        clearAllLayers()
+        const inputs = document.querySelectorAll(".map-option")
+        let darkMap = false
+        for (let i = 0; i < inputs.length; i++) {
+            const input = inputs[i].querySelector("input");
+            if(input.checked){
+                const name = input.value
+                if(name === "mapDark"){
+                    darkMap = true
+                }
+                if(name === "mapLabels"){
+                    if(darkMap){
+                        mapDarkLabels.addTo(map)
+                    }else{
+                        mapLightLabels.addTo(map)
+                    }
+                }else{
+                    layers[name].addTo(map);
+                }                
+            }
+        }
+        map.addLayer(markerCluster);
+    }
+
+    function CHtoWGS(string) {
+        if (!string) return null;
+
+        const parts = string.trim().split("/");
+        if (parts.length !== 2) return null;
+        
+
+        const east = Number(parts[0].trim());
+        const north = Number(parts[1].trim());
+
+        // Validate numeric
+        if (isNaN(east) || isNaN(north)) return null;
+
+        // LV95 uses east ≈ 2.6 million, north ≈ 1.2 million
+        // if input looks too small, maybe it's LV03 (offset by 1 million)
+        const y = east < 1000000 ? east + 2000000 : east;  // easting (Y)
+        const x = north < 1000000 ? north + 1000000 : north; // northing (X)
+
+        // Convert to auxiliary values (in millions)
+        const y0 = (y - 2600000) / 1000000;
+        const x0 = (x - 1200000) / 1000000;
+
+        // Conversion formulas
+        const lat = (
+            16.9023892 +
+            3.238272 * x0 -
+            0.270978 * y0 * y0 -
+            0.002528 * x0 * x0 -
+            0.0447 * y0 * y0 * x0 -
+            0.0140 * x0 * x0 * x0
+        ) * 100 / 36;
+
+        const lng = (
+            2.6779094 +
+            4.728982 * y0 +
+            0.791484 * y0 * x0 +
+            0.1306 * y0 * x0 * x0 -
+            0.0436 * y0 * y0 * y0
+        ) * 100 / 36;
+
+        // Check for invalid output
+        if (isNaN(lat) || isNaN(lng)) return null;
+
+        return [lat, lng];
+    }
+
+
+    function createMarkers(data, proprierties){
+        console.warn("hey")
+        for (let i = 0; i < data.length; i++) {
+            const dataPoint = data[i];
+            const path = dataPoint.relativePath
+            if(path.endsWith(".pdf")){
+                let coords = []
+                let newData = {id: path, coords: null}
+                const etichette = dataPoint.pdfInfos
+                for (let j = 0; j < etichette.length; j++) {
+                    const etichetta = etichette[j];
+                    const keys = Object.keys(etichetta)
+                    for (let k = 0; k < keys.length; k++) {
+                        const key = keys[k];
+                        if(key.toLowerCase() === "coordinate"){
+                            //console.log("hi")
+                            const newCoords = CHtoWGS(etichetta[key])
+                            
+                            if(newCoords!==null){
+                                coords.push(newCoords)
+                            }
+                        }
+                    }
+                }
+                //console.warn(coords)
+                if(coords.length !== 0){
+                    newData.coords = coords
+                    markers.push(newData)
+                }
+            }          
+        }
+        for (let i = 0; i < markers.length; i++) {
+            const item = markers[i];                // <-- the whole object {id, coords}
+            item._markers = [];                     // array to hold all Leaflet markers for this id
+
+            function getItemData(relativePath){
+                for (let i = 0; i < data.length; i++) {
+                    const dataPoint = data[i];
+                    if(dataPoint.relativePath === relativePath){
+                        return dataPoint
+                    }
+                }
+            }
+            for (let j = 0; j < item.coords.length; j++) {
+                const latlng = item.coords[j];      // [lat, lng]
+
+                const leafletMarker = L.marker(latlng, { icon: defaultMarker })
+                .bindPopup("<p style='padding: 1vmin; margin: 0'>" + item.id + "</p>")
+                markerCluster.addLayer(leafletMarker);
+
+                leafletMarker.on("popupopen", (e) => {
+                    const coords = leafletMarker.getLatLng();
+                    flyTo(coords, map.getZoom())
+                    if(document.getElementById("map-fullscreen").style.width !== "100vw")return
+                    document.getElementById("marker-info").style.display = "flex"
+                    const markerData = getItemData(item.id)
+
+                    document.getElementById("marker-info-etichette-current").innerHTML = ""
+                    document.getElementById("marker-info-title-current").textContent = markerData.relativePath
+                    document.getElementById("marker-info-title-result").onclick = () => {
+                        
+                        const root = localStorage.getItem("root")
+                        const relative = document.querySelector(".result-active").children[1].textContent
+                        const data = getItemData(relative)
+                        const path = root.slice(1, -1).substring(0, root.slice(1, -1).lastIndexOf("\\")) + relative
+                        let coords
+                        for (let i = 0; i < markers.length; i++) {
+                            const marker = markers[i];
+                            if(marker.id === relative){
+                                coords = [marker.coords][0][0]
+                            }
+                        }
+                        flyTo(coords, map.getZoom())
+                        navigator.clipboard.writeText(root.slice(1, -1).substring(0, root.slice(1, -1).lastIndexOf("\\")) + "/" + markerData.relativePath);
+                    }
+                    document.getElementById("marker-info-title-current").onclick = () => {
+                        flyTo(coords, map.getZoom())
+                        const root = localStorage.getItem("root")
+                        navigator.clipboard.writeText(root.slice(1, -1).substring(0, root.slice(1, -1).lastIndexOf("\\")) + "/" + markerData.relativePath);
+                    }
+                    updateMarkerInfos(markerData, document.getElementById("marker-info-etichette-current"))
+                    for (let i = 0; i < data.length; i++) {
+                        const result = data[i];
+                        if(result.relativePath === document.querySelector(".result-active").children[1].textContent){
+                            document.getElementById("marker-info-title-result").textContent = result.relativePath
+                            updateMarkerInfos(result, document.getElementById("marker-info-etichette-result"))
+                        }
+                    }
+                    function updateMarkerInfos(theData, theDiv){
+                        theDiv.innerHTML = ""
+                        if(theData.pdfInfos.length===0){
+                            theDiv.innerHTML = `<p style="width: 100%; text-align: center; color: red; font-size: 2vmin">Il risultato non ha coordinate (o etichette)</p>`
+                            return
+                        }
+                        for (let i = 0; i < theData.pdfInfos.length; i++) {
+                            const etichetta = theData.pdfInfos[i];
+                            const etichettaDiv = document.createElement("div")
+                            etichettaDiv.className="marker-info-etichetta"
+                            const etichettaTitle = document.createElement("div")
+                            etichettaTitle.className = "marker-etichetta-title"
+                            etichettaTitle.textContent = "Etichetta " + (i+1)
+                            etichettaTitle.addEventListener("click", ()=>{
+                                let result = etichettaTitle.textContent+"\n"
+                                const pairs = etichettaDiv.querySelectorAll(".marker-info-etichetta-pair")
+                                for (let i = 0; i < pairs.length; i++) {
+                                    const pair = pairs[i];
+                                    result = result+pair.children[0].textContent+"\t"+pair.children[1].textContent+"\n"
+                                }
+                                console.log(result)
+                                navigator.clipboard.writeText(result);
+                            })
+                            etichettaDiv.append(etichettaTitle)
+                            const keys = Object.keys(etichetta)
+                            for (let j = 0; j < keys.length; j++) {
+                                const key = keys[j];
+                                const value = etichetta[key]
+                                const etichettaPair = document.createElement("div")
+                                etichettaPair.className = "marker-info-etichetta-pair"
+                                const etichettaKey = document.createElement("div")
+                                etichettaKey.className = "marker-info-etichetta-pair-key"
+                                etichettaKey.textContent = key
+                                etichettaKey.addEventListener("click", ()=>{
+                                    navigator.clipboard.writeText(key+"\t"+value);
+                                })
+                                const etichettaValue = document.createElement("div")
+                                etichettaValue.className = "marker-info-etichetta-pair-value"
+                                etichettaValue.textContent = value
+                                etichettaValue.addEventListener("click", ()=>{
+                                    navigator.clipboard.writeText(value);
+                                })
+                                etichettaPair.append(etichettaKey, etichettaValue)
+                                etichettaDiv.append(etichettaPair)
+                            }
+                            theDiv.append(etichettaDiv)
+                        }
+                    }
+                });                
+                // Store the marker on the data object
+                item._markers.push(leafletMarker);
+            }
+            map.addLayer(markerCluster);
+        }
+        map.invalidateSize()
+        flyTo([46.191355, 9.013880], 18, 10);
+    }
+  </script>
+</body>
+</html>
